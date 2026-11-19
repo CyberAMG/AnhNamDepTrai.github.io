@@ -44,10 +44,16 @@ body{background:#000}
 .member-panel{border-left-color:#17191e}
 
 .call-overlay{position:fixed;inset:0;z-index:80;background:#050506f5;display:flex;flex-direction:column;padding:18px;gap:14px;transition:all .22s ease}
-.call-overlay.voice-only{inset:auto 50% 22px auto;transform:translateX(50%);width:min(520px,calc(100vw - 24px));height:auto;max-height:120px;padding:12px 16px;background:#17181df2;border:1px solid #343640;border-radius:32px;box-shadow:0 16px 55px #000b;backdrop-filter:blur(24px)}
-.call-overlay.voice-only .call-stage,.call-overlay.voice-only .call-settings{display:none}
-.call-overlay.voice-only .call-head{display:none}
-.call-overlay.voice-only .call-status{font-size:11px;margin-bottom:4px}
+.call-overlay.voice-only{inset:auto 50% 18px auto;transform:translateX(50%);width:min(760px,calc(100vw - 24px));height:auto;max-height:42vh;min-height:150px;padding:14px 16px;background:#17181df7;border:1px solid #343640;border-radius:28px;box-shadow:0 16px 55px #000b;backdrop-filter:blur(24px)}
+.call-overlay.voice-only .call-stage{display:grid;flex:1;min-height:64px;max-height:22vh;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));align-content:start;overflow:auto}
+.call-overlay.voice-only .call-tile{min-height:76px;border-radius:20px;background:linear-gradient(145deg,#20222c,#111217)}
+.call-overlay.voice-only .call-tile video{max-height:20vh;object-fit:cover}
+.call-overlay.voice-only .call-settings{display:none}
+.call-overlay.voice-only .call-head{display:flex}
+.call-overlay.voice-only .call-status{font-size:11px;margin:0}
+.call-overlay.voice-only .call-controls{gap:10px}
+.call-overlay.voice-only .call-controls button{width:46px;height:46px}
+@media(max-width:600px){.call-overlay.voice-only{max-height:38vh}.call-overlay.voice-only .call-stage{grid-template-columns:repeat(auto-fit,minmax(105px,1fr))}}
 .call-overlay.minimized{inset:auto 16px 16px auto;transform:none;width:min(360px,calc(100vw - 32px));height:auto;max-height:70px;padding:10px 14px;border:1px solid #343744;border-radius:28px;box-shadow:0 12px 50px #000b}
 .call-overlay.minimized .call-stage,.call-overlay.minimized .call-settings,.call-overlay.minimized .call-controls{display:none}
 .call-overlay.minimized .call-head{min-height:42px}
@@ -234,6 +240,8 @@ async function startCall(){
   livekitRoom.on(lk.RoomEvent.Disconnected,()=>{callStatus('Đã ngắt kết nối')});
   livekitRoom.on(lk.RoomEvent.LocalTrackPublished,(publication,participant)=>{if(publication.track&&publication.track.kind==='video')attachCallTrack(publication.track,participant)});
   await livekitRoom.connect(data.serverUrl,data.token);
+  callTile(currentUser.id);
+  livekitRoom.remoteParticipants.forEach(participant=>{callTile(participant.identity);participant.trackPublications.forEach(publication=>{if(publication.isSubscribed&&publication.track)attachCallTrack(publication.track,participant)})});
   await livekitRoom.localParticipant.setMicrophoneEnabled(true);callMicOn=true;
   $('callMic').textContent='🎙';$('callMic').title='Tắt mic';$('callMic').classList.add('is-on');$('callMic').classList.remove('is-muted');callTile(currentUser.id);callStatus('Đã vào phòng thoại • Chờ thành viên khác tham gia');
  }catch(e){callStatus('Lỗi kết nối: '+(e.message||'Không rõ nguyên nhân'));if(livekitRoom){try{await livekitRoom.disconnect()}catch{}livekitRoom=null}livekitCallChannelId=null;}finally{callConnecting=false}
