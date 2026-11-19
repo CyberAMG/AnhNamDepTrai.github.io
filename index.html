@@ -92,6 +92,11 @@ body{background:#000}
 .call-settings select{background:#20222a;color:#fff;border:1px solid #41434d;border-radius:20px;padding:8px 12px}
 .call-overlay.voice-only .call-controls{gap:12px}
 @media(max-width:650px){.call-overlay{padding:10px}.call-tile{min-height:180px}.call-overlay.voice-only{bottom:12px}.call-controls{gap:10px}.call-controls button{width:50px;height:50px}}.call-tile{min-height:180px}.call-controls button{padding:0}
+/* Normalize call controls so inherited global button typography cannot enlarge icons */
+.call-overlay .call-controls button{box-sizing:border-box!important;width:50px!important;height:50px!important;min-width:50px!important;min-height:50px!important;max-width:50px!important;max-height:50px!important;padding:0!important;margin:0!important;border-radius:50%!important;display:flex!important;align-items:center!important;justify-content:center!important;overflow:hidden!important;font-family:Arial,sans-serif!important;font-size:19px!important;font-weight:500!important;line-height:1!important;letter-spacing:0!important;text-transform:none!important;white-space:nowrap!important;text-align:center!important}
+.call-overlay.voice-only .call-controls button{width:46px!important;height:46px!important;min-width:46px!important;min-height:46px!important;max-width:46px!important;max-height:46px!important}
+.call-overlay .call-head .icon-btn{width:36px!important;height:36px!important;min-width:36px!important;min-height:36px!important;padding:0!important;font-size:16px!important;line-height:1!important;display:grid!important;place-items:center!important;overflow:hidden!important}
+.call-overlay .call-controls button::before,.call-overlay .call-controls button::after{content:none!important;display:none!important}
 </style>
 </head>
 <body>
