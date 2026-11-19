@@ -6,6 +6,7 @@
 <meta name="theme-color" content="#000000">
 <title>Gaming Hub V2</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/livekit-client@2.23.0/dist/livekit-client.umd.min.js"></script>
 <style>
 :root{color-scheme:dark;--bg:#111214;--panel:#191a1f;--panel2:#202127;--line:#2b2d35;--muted:#9296a3;--text:#f4f5f8;--accent:#5865f2;--accent2:#4752c4;--green:#3ba675;--danger:#ed626c}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px Inter,system-ui,-apple-system,Segoe UI,sans-serif;height:100vh;overflow:hidden}button,input{font:inherit}button{cursor:pointer;border:0;color:inherit}.hidden{display:none!important}
@@ -41,6 +42,8 @@ body{background:#000}
 .rail-divider{background:#24262d}
 .side-bottom{border-top-color:#1b1d22}
 .member-panel{border-left-color:#17191e}
+
+.call-overlay{position:fixed;inset:0;z-index:80;background:#050506f5;display:flex;flex-direction:column;padding:18px;gap:14px}.call-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.call-head strong{font-size:16px}.call-stage{flex:1;min-height:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr));gap:12px;align-content:center;overflow:auto}.call-tile{position:relative;min-height:220px;background:#111217;border:1px solid #292b34;border-radius:16px;overflow:hidden;display:grid;place-items:center}.call-tile video{width:100%;height:100%;max-height:calc(100vh - 230px);object-fit:contain;background:#050506}.call-tile audio{display:none}.call-tile .call-name{position:absolute;left:12px;bottom:10px;background:#000a;padding:6px 10px;border-radius:9px;font-size:12px}.call-controls{display:flex;justify-content:center;align-items:center;gap:8px;flex-wrap:wrap}.call-controls button,.call-controls select{background:#20222a;border:1px solid #343744;color:#fff;border-radius:11px;padding:10px 13px}.call-controls .hangup{background:#b83242;border-color:#b83242}.call-status{color:#aeb2bf;font-size:12px;text-align:center}.call-settings{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}.call-settings label{display:flex;align-items:center;gap:6px;color:#aeb2bf;font-size:12px}.call-settings select{background:#171920;color:#fff;border:1px solid #343744;border-radius:8px;padding:7px}@media(max-width:650px){.call-overlay{padding:10px}.call-tile{min-height:180px}.call-controls button{padding:9px 10px}}
 </style>
 </head>
 <body>
@@ -65,7 +68,7 @@ body{background:#000}
   <div class="side-bottom"><div class="avatar" id="myAvatar">U</div><div class="user-meta"><strong id="myName">Bạn</strong><small>Đang hoạt động</small></div><button class="icon-btn" id="signOut" title="Đăng xuất">↪</button></div>
  </aside>
  <main class="main">
-  <header class="topbar"><span id="channelTitle">Chọn một server</span><div class="top-actions"><button class="icon-btn" id="inviteBtn" title="Mã mời">⌁</button></div></header>
+  <header class="topbar"><span id="channelTitle">Chọn một server</span><div class="top-actions"><button class="icon-btn" id="callBtn" title="Gọi thoại / video">◉</button><button class="icon-btn" id="inviteBtn" title="Mã mời">⌁</button></div></header>
   <div class="chat-scroll" id="messages"><div class="welcome"><div class="big">🎮</div><strong>Chào mừng đến Gaming Hub</strong><p>Chọn server hoặc tạo server mới để bắt đầu.</p></div></div>
   <div class="composer-wrap"><form class="composer" id="messageForm"><input id="messageInput" autocomplete="off" placeholder="Chọn kênh để bắt đầu nhắn tin..." disabled><button class="send" type="submit" aria-label="Gửi tin nhắn">➤</button></form></div>
  </main>
@@ -147,6 +150,50 @@ async function selectChannel(ch){currentChannel=ch;document.querySelectorAll('#c
 function appendMessage(m){if(!currentChannel||m.channel_id!==currentChannel.id)return;const node=document.createElement('div');node.className='msg';const name=m.sender_id===currentUser.id?'Bạn':'Thành viên';node.innerHTML='<div class="avatar">'+(name==='Bạn'?'B':'U')+'</div><div class="msg-content"><div class="msg-head"><strong>'+name+'</strong><time>'+new Date(m.created_at).toLocaleString('vi-VN')+'</time></div><div class="msg-text">'+esc(m.content)+'</div></div>';$('messages').append(node);$('messages').scrollTop=$('messages').scrollHeight}
 async function loadMessages(){const {data,error}=await db.from('messages').select('*').eq('channel_id',currentChannel.id).order('created_at',{ascending:true}).limit(100);if(error)throw error;$('messages').innerHTML='';if(!data?.length){$('messages').innerHTML='<div class="empty-note">Chưa có tin nhắn. Hãy bắt đầu cuộc trò chuyện!</div>';return}data.forEach(appendMessage)}
 $('messageForm').onsubmit=async e=>{e.preventDefault();const input=$('messageInput'),content=input.value.trim();if(!content||!currentChannel)return;input.value='';const {error}=await db.from('messages').insert({channel_id:currentChannel.id,sender_id:currentUser.id,content});if(error){input.value=content;alert('Không gửi được tin nhắn: '+error.message)}};
+
+let livekitRoom=null,livekitCallChannelId=null,callMicOn=true,callCameraOn=false,callScreenOn=false;
+function callStatus(message){const el=$('callStatus');if(el)el.textContent=message||''}
+function callTile(identity){let tile=document.querySelector('[data-call-peer="'+CSS.escape(identity)+'"]');if(!tile){tile=document.createElement('div');tile.className='call-tile';tile.dataset.callPeer=identity;tile.innerHTML='<div class="call-name">'+esc(identity===currentUser.id?'Bạn':identity.slice(0,8))+'</div>';$('callStage').append(tile)}return tile}
+function attachCallTrack(track,participant){const tile=callTile(participant.identity);const el=track.attach();if(track.kind==='audio'){el.autoplay=true;tile.append(el)}else{el.autoplay=true;el.playsInline=true;tile.querySelectorAll('video').forEach(v=>v.remove());tile.prepend(el)}}
+function detachCallTrack(track){track.detach().forEach(el=>el.remove())}
+function renderExistingCallTracks(){if(!livekitRoom)return;livekitRoom.remoteParticipants.forEach(p=>p.trackPublications.forEach(pub=>{if(pub.isSubscribed&&pub.track)attachCallTrack(pub.track,p)}));livekitRoom.localParticipant.trackPublications.forEach(pub=>{if(pub.track&&pub.track.kind==='video')attachCallTrack(pub.track,livekitRoom.localParticipant)})}
+function openCallPanel(){
+ if(!currentChannel){alert('Hãy chọn một kênh trước khi gọi.');return}
+ if($('callOverlay'))return;
+ const root=document.createElement('section');root.id='callOverlay';root.className='call-overlay';
+ root.innerHTML='<div class="call-head"><strong>◉　Gọi trong #'+esc(currentChannel.name)+'</strong><button class="icon-btn" id="closeCallPanel" title="Thu nhỏ">－</button></div><div class="call-stage" id="callStage"><div class="call-tile"><div class="call-name">Đang chờ kết nối...</div></div></div><div class="call-status" id="callStatus">Chưa kết nối</div><div class="call-settings"><label>Độ phân giải <select id="shareResolution"><option value="1080">1080p</option><option value="1440">1440p</option><option value="720">720p</option><option value="480">480p</option></select></label><label>FPS <select id="shareFps"><option>60</option><option selected>30</option><option>50</option><option>25</option><option>15</option></select></label><label>Bitrate <select id="shareBitrate"><option value="4000000">4 Mbps</option><option value="8000000" selected>8 Mbps</option><option value="12000000">12 Mbps</option><option value="20000000">20 Mbps</option></select></label><label>Chất lượng nhận <select id="receiveQuality"><option value="high" selected>Tự động / Cao</option><option value="medium">720p / Vừa</option><option value="low">Thấp</option></select></label><label>FPS nhận <select id="receiveFps"><option value="60" selected>60</option><option value="50">50</option><option value="30">30</option><option value="15">15</option></select></label></div><div class="call-controls"><button id="callMic">🎙 Tắt mic</button><button id="callCamera">▣ Bật camera</button><button id="callScreen">▧ Chia sẻ màn hình</button><button class="hangup" id="callLeave">Kết thúc</button></div>';
+ document.body.append(root);
+ $('closeCallPanel').onclick=()=>root.classList.toggle('minimized');
+ $('callMic').onclick=async()=>{if(!livekitRoom)return;callMicOn=!callMicOn;await livekitRoom.localParticipant.setMicrophoneEnabled(callMicOn);$('callMic').textContent=callMicOn?'🎙 Tắt mic':'🔇 Bật mic'};
+ $('callCamera').onclick=async()=>{if(!livekitRoom)return;callCameraOn=!callCameraOn;await livekitRoom.localParticipant.setCameraEnabled(callCameraOn);$('callCamera').textContent=callCameraOn?'▣ Tắt camera':'▣ Bật camera';renderExistingCallTracks()};
+ $('callScreen').onclick=async()=>{if(!livekitRoom)return;try{callScreenOn=!callScreenOn;if(callScreenOn){const h=Number($('shareResolution').value),fps=Number($('shareFps').value),bitrate=Number($('shareBitrate').value);await livekitRoom.localParticipant.setScreenShareEnabled(true,{audio:true,resolution:{width:Math.round(h*16/9),height:h,frameRate:fps},contentHint:'detail'},{screenShareEncoding:{maxBitrate:bitrate,maxFramerate:fps},simulcast:true});$('callScreen').textContent='▧ Dừng chia sẻ'}else{await livekitRoom.localParticipant.setScreenShareEnabled(false);$('callScreen').textContent='▧ Chia sẻ màn hình'}}catch(e){callScreenOn=false;callStatus('Không thể chia sẻ màn hình: '+e.message)}};
+ $('callLeave').onclick=leaveCall;
+ $('receiveQuality').onchange=applyReceiveQuality;$('receiveFps').onchange=applyReceiveQuality;
+}
+function applyReceiveQuality(){if(!livekitRoom)return;const lk=window.LivekitClient,q=$('receiveQuality').value,fps=Number($('receiveFps').value);const quality=q==='low'?lk.VideoQuality.LOW:q==='medium'?lk.VideoQuality.MEDIUM:lk.VideoQuality.HIGH;livekitRoom.remoteParticipants.forEach(p=>p.trackPublications.forEach(pub=>{if(pub.kind==='video'){pub.setVideoQuality(quality);pub.setVideoFPS(fps)}}))}
+async function startCall(){
+ if(!currentChannel){alert('Hãy chọn một kênh trước khi gọi.');return}
+ openCallPanel();if(livekitRoom){callStatus('Bạn đang ở trong cuộc gọi này.');return}
+ if(!window.LivekitClient){callStatus('Không tải được thư viện gọi LiveKit. Hãy tải lại trang.');return}
+ callStatus('Đang xác thực và kết nối...');
+ try{
+  const {data:sessionData}=await db.auth.getSession();if(!sessionData.session)throw Error('Phiên đăng nhập đã hết hạn.');
+  const {data,error}=await db.functions.invoke('livekit-token',{body:{channelId:currentChannel.id}});if(error)throw error;if(!data?.token||!data?.serverUrl)throw Error(data?.error||'Máy chủ chưa trả token.');
+  const lk=window.LivekitClient;livekitCallChannelId=currentChannel.id;
+  livekitRoom=new lk.Room({adaptiveStream:true,dynacast:true,videoCaptureDefaults:{resolution:lk.VideoPresets.h720.resolution},publishDefaults:{simulcast:true,screenShareSimulcastLayers:[lk.VideoPresets.h360,lk.VideoPresets.h720],screenShareEncoding:{maxBitrate:8000000,maxFramerate:30}}});
+  livekitRoom.on(lk.RoomEvent.TrackSubscribed,(track,publication,participant)=>{attachCallTrack(track,participant);callStatus('Đã kết nối • '+(livekitRoom.remoteParticipants.size+1)+' người')});
+  livekitRoom.on(lk.RoomEvent.TrackUnsubscribed,(track)=>detachCallTrack(track));
+  livekitRoom.on(lk.RoomEvent.ParticipantDisconnected,p=>{document.querySelector('[data-call-peer="'+CSS.escape(p.identity)+'"]')?.remove();callStatus('Một thành viên đã rời cuộc gọi')});
+  livekitRoom.on(lk.RoomEvent.Disconnected,()=>{callStatus('Đã ngắt kết nối')});
+  livekitRoom.on(lk.RoomEvent.LocalTrackPublished,(publication,participant)=>{if(publication.track)attachCallTrack(publication.track,participant)});
+  await livekitRoom.connect(data.serverUrl,data.token);
+  await livekitRoom.localParticipant.setMicrophoneEnabled(true);callMicOn=true;
+  $('callMic').textContent='🎙 Tắt mic';callStatus('Đã kết nối • Chờ thành viên khác tham gia');
+ }catch(e){callStatus('Lỗi kết nối: '+(e.message||'Không rõ nguyên nhân'));if(livekitRoom){try{await livekitRoom.disconnect()}catch{}livekitRoom=null}}
+}
+async function leaveCall(){if(livekitRoom){try{await livekitRoom.disconnect()}catch{}livekitRoom=null}livekitCallChannelId=null;callMicOn=true;callCameraOn=false;callScreenOn=false;$('callOverlay')?.remove()}
+$('callBtn').onclick=startCall;
+
 db.auth.getSession().then(async({data})=>{if(data.session){currentUser=data.session.user;try{await enterApp()}catch(e){console.error(e);alert('Không tải được Gaming Hub: '+e.message)}}});
 db.auth.onAuthStateChange(async(event,session)=>{if(event==='SIGNED_OUT'){currentUser=null;showAuth()}});
 </script>
