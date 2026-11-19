@@ -2,40 +2,203 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Website của tôi</title>
-
-    <style>
-        body {
-            background: #111;
-            color: white;
-            font-family: Arial;
-            text-align: center;
-            padding: 100px 20px;
-        }
-
-        h1 {
-            color: #00aaff;
-        }
-
-        button {
-            background: #00aaff;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 10px;
-            cursor: pointer;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gaming Hub</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+font-family:Arial,sans-serif;
+background:#111214;
+color:#fff;
+height:100vh;
+overflow:hidden;
+}
+.app{display:flex;height:100vh}
+.servers{
+width:72px;background:#17181c;
+display:flex;flex-direction:column;align-items:center;
+padding:12px 0;gap:12px;
+}
+.server{
+width:48px;height:48px;border-radius:17px;
+background:#292b31;display:grid;place-items:center;
+cursor:pointer;font-size:20px;
+transition:.2s;
+}
+.server:hover,.server.active{
+border-radius:14px;background:#5865f2;
+}
+.sidebar{
+width:230px;background:#1b1c20;
+display:flex;flex-direction:column;
+}
+.server-title{
+padding:22px;font-weight:bold;
+border-bottom:1px solid #303136;
+}
+.channels{padding:15px;flex:1}
+.section{
+color:#92949c;font-size:12px;
+margin:15px 0 10px;
+}
+.channel{
+padding:11px;border-radius:7px;
+color:#aaa;cursor:pointer;
+}
+.channel:hover,.channel.active{
+background:#303136;color:white;
+}
+.chat{
+flex:1;display:flex;flex-direction:column;
+min-width:0;background:#222327;padding:12px;
+}
+.chat-header{
+height:52px;display:flex;align-items:center;
+padding:0 15px;border-bottom:1px solid #35363b;
+font-weight:bold;
+}
+.messages{
+flex:1;overflow-y:auto;padding:20px;
+}
+.message{margin-bottom:20px;display:flex;gap:12px}
+.avatar{
+width:38px;height:38px;border-radius:50%;
+background:#5865f2;display:grid;
+place-items:center;flex-shrink:0;
+}
+.content{color:#ddd;line-height:1.5}
+.username{font-weight:bold;color:#fff}
+.input-area{padding:12px}
+.input-box{
+height:54px;background:#383a40;
+border-radius:30px;display:flex;
+align-items:center;padding:5px 7px 5px 18px;
+}
+.input-box input{
+flex:1;min-width:0;background:none;border:0;
+outline:0;color:white;font-size:15px;
+}
+.send{
+width:42px;height:42px;border-radius:50%;
+border:0;background:#5865f2;color:white;
+cursor:pointer;font-size:18px;
+}
+.send:hover{background:#4752c4}
+.members{
+width:210px;background:#1b1c20;padding:20px;
+}
+.member{display:flex;align-items:center;gap:10px;
+margin:15px 0;color:#bbb}
+.dot{width:9px;height:9px;border-radius:50%;
+background:#43b581}
+@media(max-width:750px){
+.members{display:none}
+.sidebar{width:175px}
+}
+@media(max-width:480px){
+.servers{width:58px}
+.server{width:42px;height:42px}
+.sidebar{width:125px}
+.server-title{padding:16px 8px;font-size:13px}
+.channels{padding:8px}
+.channel{font-size:13px;padding:10px 5px}
+}
+</style>
 </head>
-
 <body>
-    <h1>Xin chào!</h1>
-    <p>Đây là website đầu tiên của tôi.</p>
+<div class="app">
 
-    <button onclick="alert('Chào mừng bạn!')">
-        Nhấn vào đây
-    </button>
+<div class="servers">
+<div class="server active">G</div>
+<div class="server">🎮</div>
+<div class="server">🎧</div>
+<div class="server">+</div>
+</div>
+
+<div class="sidebar">
+<div class="server-title">Gaming Hub</div>
+<div class="channels">
+<div class="section">KÊNH CHAT</div>
+<div class="channel active" onclick="switchChannel(this,'general')"># general</div>
+<div class="channel" onclick="switchChannel(this,'gaming')"># gaming</div>
+<div class="channel" onclick="switchChannel(this,'media')"># media</div>
+<div class="section">KÊNH THOẠI</div>
+<div class="channel" onclick="switchChannel(this,'voice')">◖ voice</div>
+</div>
+</div>
+
+<div class="chat">
+<div class="chat-header" id="channelTitle"># general</div>
+<div class="messages" id="messages">
+<div class="message">
+<div class="avatar">G</div>
+<div class="content">
+<div class="username">Gaming Hub</div>
+Chào mừng bạn đến với Gaming Hub!
+</div>
+</div>
+</div>
+<div class="input-area">
+<div class="input-box">
+<input id="messageInput" type="text" autocomplete="off">
+<button class="send" onclick="sendMessage()">➤</button>
+</div>
+</div>
+</div>
+
+<div class="members">
+<div class="section">THÀNH VIÊN</div>
+<div class="member"><span class="dot"></span> Bạn</div>
+</div>
+
+</div>
+
+<script>
+function sendMessage(){
+const input=document.getElementById('messageInput');
+const text=input.value.trim();
+if(!text)return;
+
+const message=document.createElement('div');
+message.className='message';
+
+const avatar=document.createElement('div');
+avatar.className='avatar';
+avatar.textContent='U';
+
+const content=document.createElement('div');
+content.className='content';
+
+const username=document.createElement('div');
+username.className='username';
+username.textContent='Bạn';
+
+const body=document.createElement('div');
+body.textContent=text;
+
+content.append(username,body);
+message.append(avatar,content);
+
+document.getElementById('messages').appendChild(message);
+input.value='';
+document.getElementById('messages').scrollTop=
+document.getElementById('messages').scrollHeight;
+}
+
+document.getElementById('messageInput')
+.addEventListener('keydown',function(e){
+if(e.key==='Enter')sendMessage();
+});
+
+function switchChannel(element,name){
+document.querySelectorAll('.channel')
+.forEach(c=>c.classList.remove('active'));
+element.classList.add('active');
+document.getElementById('channelTitle').textContent=
+name==='voice'?'◖ voice':'# '+name;
+document.getElementById('messages').innerHTML='';
+}
+</script>
 </body>
 </html>
