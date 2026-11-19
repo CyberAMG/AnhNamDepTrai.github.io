@@ -189,7 +189,7 @@ async function startCall(){
  callStatus('Đang xác thực và kết nối...');
  try{
   const {data:sessionData}=await db.auth.getSession();if(!sessionData.session)throw Error('Phiên đăng nhập đã hết hạn.');
-  const {data,error}=await db.functions.invoke('livekit-token',{body:{channelId:currentChannel.id}});if(error)throw error;if(!data?.token||!data?.serverUrl)throw Error(data?.error||'Máy chủ chưa trả token.');
+  const {data,error}=await db.functions.invoke('livekit-token',{body:{channelId:currentChannel.id}});if(error){let detail='';try{const response=error.context;if(response&&typeof response.clone==='function'){const payload=await response.clone().json();detail=[payload.error,payload.missing?.length?'Thiếu: '+payload.missing.join(', '):'',payload.detail].filter(Boolean).join(' — ')}}catch{}throw Error(detail||error.message||'Không lấy được token cuộc gọi.')}if(!data?.token||!data?.serverUrl)throw Error(data?.error||'Máy chủ chưa trả token.');
   const lk=window.LivekitClient;livekitCallChannelId=currentChannel.id;
   livekitRoom=new lk.Room({adaptiveStream:true,dynacast:true,videoCaptureDefaults:{resolution:lk.VideoPresets.h720.resolution},publishDefaults:{simulcast:true,screenShareSimulcastLayers:[lk.VideoPresets.h360,lk.VideoPresets.h720],screenShareEncoding:{maxBitrate:8000000,maxFramerate:30}}});
   livekitRoom.on(lk.RoomEvent.TrackSubscribed,(track,publication,participant)=>{attachCallTrack(track,participant);callStatus('Đã kết nối • '+(livekitRoom.remoteParticipants.size+1)+' người')});
