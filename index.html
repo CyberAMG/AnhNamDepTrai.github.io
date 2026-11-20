@@ -826,13 +826,14 @@ function openCreateChannel(){
 }
 $('addChannelBtn').onclick=openCreateChannel;
 
+function scrollChatToBottom(){const box=$('messages');if(!box)return;box.scrollTop=box.scrollHeight;requestAnimationFrame(()=>{box.scrollTop=box.scrollHeight;});}
 function appendMessage(m){
  if(!currentChannel||m.channel_id!==currentChannel.id)return;
  if([...document.querySelectorAll('.msg')].some(node=>node.dataset.messageId===String(m.id)))return;
  const node=document.createElement('div');node.className='msg';node.dataset.messageId=m.id;node.dataset.senderId=m.sender_id;
  node.innerHTML='<button type="button" class="msg-avatar" aria-label="Mở hồ sơ người gửi"></button><div class="msg-content"><div class="msg-head"><strong></strong><time>'+new Date(m.created_at).toLocaleString('vi-VN')+'</time></div><div class="msg-text">'+esc(m.content)+'</div></div>';
  node.querySelector('.msg-avatar').onclick=()=>openMemberProfile(m.sender_id);
- $('messages').append(node);paintMessageIdentity(node);$('messages').scrollTop=$('messages').scrollHeight;
+ $('messages').append(node);paintMessageIdentity(node);scrollChatToBottom();
  if(m.sender_id!==currentUser?.id&&!callProfileCache.has(m.sender_id))loadMessageProfile(m.sender_id);
 }
 async function loadMessages(){
@@ -842,7 +843,7 @@ async function loadMessages(){
  $('messages').innerHTML='';
  if(!data?.length){$('messages').innerHTML='<div class="empty-note">Chưa có tin nhắn. Hãy bắt đầu cuộc trò chuyện!</div>';return}
  await cacheMessageProfiles(data);if(!currentChannel||currentChannel.id!==channelId)return;
- data.forEach(appendMessage);
+ data.forEach(appendMessage);scrollChatToBottom();
 }
 $('messageForm').onsubmit=async e=>{e.preventDefault();const input=$('messageInput'),content=input.value.trim();if(!content||!currentChannel)return;input.value='';const {error}=await db.from('messages').insert({channel_id:currentChannel.id,sender_id:currentUser.id,content});if(error){input.value=content;alert('Không gửi được tin nhắn: '+error.message)}};
 
