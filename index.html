@@ -117,6 +117,27 @@ body{background:#000}
 .call-overlay.voice-only .call-controls button{width:46px!important;height:46px!important;min-width:46px!important;min-height:46px!important;max-width:46px!important;max-height:46px!important}
 .call-overlay .call-head .icon-btn{width:36px!important;height:36px!important;min-width:36px!important;min-height:36px!important;padding:0!important;font-size:16px!important;line-height:1!important;display:grid!important;place-items:center!important;overflow:hidden!important}
 .call-overlay .call-controls button::before,.call-overlay .call-controls button::after{content:none!important;display:none!important}
+
+/* Settings refresh: single scroll surface and consistent theme tokens */
+.modal:has(.profile-settings-layout){width:min(820px,96vw);max-height:92vh;overflow-y:auto;overflow-x:hidden;padding:24px;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+.modal:has(.profile-settings-layout) .profile-settings-layout{display:grid;gap:14px;max-height:none;overflow:visible;padding:0}
+.modal:has(.profile-settings-layout) .profile-settings-section{border:1px solid var(--line);border-radius:18px;padding:18px;background:var(--panel)}
+.modal:has(.profile-settings-layout) .profile-settings-section h3{font-size:14px;font-weight:750;letter-spacing:.2px;margin:0 0 15px}
+.modal:has(.profile-settings-layout) .profile-settings-preview{border-radius:18px;background:var(--panel);border-color:var(--line)}
+.modal:has(.profile-settings-layout) .profile-cover-preview{height:136px}
+.modal:has(.profile-settings-layout) .profile-preview-row{padding:0 20px;gap:15px}
+.modal:has(.profile-settings-layout) .profile-edit-avatar{width:82px;height:82px;border-color:var(--panel);box-shadow:0 4px 18px #0003}
+.modal:has(.profile-settings-layout) .field{margin:13px 0}
+.modal:has(.profile-settings-layout) .field input,.modal:has(.profile-settings-layout) .profile-settings-section textarea,.modal:has(.profile-settings-layout) .profile-settings-section select{min-height:44px;border-radius:12px;background:var(--panel2);color:var(--text);border:1px solid var(--line);padding:11px 13px;outline:none}
+.modal:has(.profile-settings-layout) .field input:focus,.modal:has(.profile-settings-layout) textarea:focus,.modal:has(.profile-settings-layout) select:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 18%,transparent)}
+.modal:has(.profile-settings-layout) .profile-file{width:100%;min-width:0;padding:9px;border-radius:12px;background:var(--panel2);color:var(--text);border:1px solid var(--line)}
+.modal:has(.profile-settings-layout) .profile-color-row{margin:8px 0;padding:9px 11px;border:1px solid var(--line);border-radius:12px;background:var(--panel2)}
+.modal:has(.profile-settings-layout) .profile-color-row label{min-width:90px;color:var(--text)}
+.modal:has(.profile-settings-layout) .profile-color-row input[type=color]{width:48px;height:36px;cursor:pointer;border-radius:9px}
+.modal:has(.profile-settings-layout) .modal-actions{position:sticky;bottom:-24px;background:var(--panel);padding:14px 0 2px;margin-top:12px;border-top:1px solid var(--line);z-index:2}
+.modal:has(.profile-settings-layout) .modal-actions .primary{min-width:120px}
+.modal:has(.profile-settings-layout) .status:empty{display:none}
+@media(max-width:560px){.modal:has(.profile-settings-layout){width:100%;max-height:94vh;padding:15px;border-radius:18px}.modal:has(.profile-settings-layout) .profile-cover-preview{height:105px}.modal:has(.profile-settings-layout) .profile-upload-grid,.modal:has(.profile-settings-layout) .profile-theme-grid{grid-template-columns:1fr}.modal:has(.profile-settings-layout) .modal-actions{bottom:-15px}}
 </style>
 </head>
 <body>
@@ -228,16 +249,27 @@ function paintOwnProfile(){
  else avatar.textContent=initials(name);
  applyUserTheme();
 }
-function applyUserTheme(){
- const mode=ownProfile.theme_mode||'dark';
- const accent=safeColor(ownProfile.accent_color,'#5865f2');
- const bg=mode==='light'?'#f3f4f8':safeColor(ownProfile.background_color,'#000000');
- const panel=mode==='light'?'#ffffff':safeColor(ownProfile.panel_color,'#08090b');
- const text=mode==='light'?'#171923':'#f1f2f5';
- const muted=mode==='light'?'#626777':'#858995';
+function applyUserTheme(profile=ownProfile){
+ const mode=profile.theme_mode||'dark',light=mode==='light';
+ const accent=safeColor(profile.accent_color,'#5865f2');
+ const bg=light?'#f3f4f8':safeColor(profile.background_color,'#000000');
+ const panel=light?'#ffffff':safeColor(profile.panel_color,'#08090b');
+ const panel2=light?'#e9ebf2':mixColor(panel,'#ffffff',.055);
+ const line=light?'#d9dce5':mixColor(panel,'#ffffff',.12);
+ const text=light?'#171923':'#f1f2f5',muted=light?'#626777':'#858995';
  let style=document.getElementById('userThemeStyle');if(!style){style=document.createElement('style');style.id='userThemeStyle';document.head.append(style)}
- style.textContent=':root{color-scheme:'+ (mode==='light'?'light':'dark') +';--accent:'+accent+';--accent2:'+accent+';--bg:'+bg+';--panel:'+panel+';--panel2:'+panel+';--line:'+(mode==='light'?'#d9dce5':'#1b1d22')+';--text:'+text+';--muted:'+muted+'}body,.app{background:'+bg+'!important;color:'+text+'!important}.side,.member-panel,.server-rail,.modal{background:'+panel+'!important;color:'+text+'!important}.main,.chat-scroll{background:'+bg+'!important;color:'+text+'!important}.topbar,.side-bottom{border-color:var(--line)!important}.server-icon.active,.primary,.send{background:'+accent+'!important}.icon-btn,.channel,.composer{background:'+(mode==='light'?'#e9ebf2':panel)+'!important;color:'+text+'!important}.field input,.field textarea,.profile-file{background:'+(mode==='light'?'#fff':'#030405')+'!important;color:'+text+'!important;border-color:var(--line)!important}';
+ style.textContent=':root{color-scheme:'+(light?'light':'dark')+';--accent:'+accent+';--accent2:'+accent+';--bg:'+bg+';--panel:'+panel+';--panel2:'+panel2+';--line:'+line+';--text:'+text+';--muted:'+muted+'}'+
+ 'body,.app,.main,.chat-scroll,.chat-area,.content-area{background:var(--bg)!important;color:var(--text)!important}'+
+ '.side,.member-panel,.server-rail,.modal,.profile-settings-section,.profile-settings-preview{background:var(--panel)!important;color:var(--text)!important;border-color:var(--line)!important}'+
+ '.topbar,.side-bottom,.channel-list,.member-list,.server-header{background:var(--panel)!important;color:var(--text)!important;border-color:var(--line)!important}'+
+ '.topbar,.side-bottom,.channel,.member,.server-name,.section-label,.user-meta,.modal h2{color:var(--text)!important}'+
+ '.server-icon,.channel,.icon-btn,.composer,.message-input,.field input,.field textarea,.field select,.profile-settings-section select,.profile-settings-section textarea,.profile-file,.server-context{background:var(--panel2)!important;color:var(--text)!important;border-color:var(--line)!important}'+
+ '.server-icon.active,.primary,.send,.mini-add:hover{background:var(--accent)!important;color:#fff!important}'+
+ '.ghost{color:var(--text)!important}.status,.notice{background:var(--panel2)!important;color:var(--text)!important;border-color:var(--line)!important}'+
+ '.profile-hint,.profile-preview-name small,.profile-preview-bio,.profile-upload-note,.profile-color-row span{color:var(--muted)!important}'+
+ '.modal-backdrop{background:#0009!important}';
 }
+function mixColor(a,b,amount){const x=a.match(/[0-9a-f]{2}/gi)||['00','00','00'],y=b.match(/[0-9a-f]{2}/gi)||['ff','ff','ff'];return '#'+x.map((v,i)=>Math.round(parseInt(v,16)*(1-amount)+parseInt(y[i],16)*amount).toString(16).padStart(2,'0')).join('')}
 async function loadOwnProfile(){
  if(!currentUser)return;
  const {data,error}=await db.from('profiles').select('id,username,avatar_url,bio,banner_url,banner_color,theme_mode,accent_color,background_color,panel_color').eq('id',currentUser.id).maybeSingle();
