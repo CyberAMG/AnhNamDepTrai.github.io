@@ -435,286 +435,6 @@ body{background:#000}
     min-height:56px!important;height:56px!important;
   }
 }
-/* Absolute top layer for profile media: always above cards, panels and effects */
-.modal:has(.profile-settings-layout) .profile-settings-layout{
-  position:relative!important;z-index:0!important;
-  isolation:auto!important;
-  -webkit-mask:none!important;mask:none!important;
-}
-.modal:has(.profile-settings-layout) .profile-settings-section{
-  position:relative!important;z-index:0!important;
-}
-.modal:has(.profile-settings-layout) .profile-settings-preview{
-  position:relative!important;z-index:2147483647!important;
-  isolation:isolate!important;overflow:visible!important;
-  opacity:1!important;visibility:visible!important;filter:none!important;
-  transform:translateZ(0)!important;
-  background:var(--panel)!important;
-}
-.modal:has(.profile-settings-layout) .profile-settings-preview::before,
-.modal:has(.profile-settings-layout) .profile-settings-preview::after,
-.modal:has(.profile-settings-layout) .profile-cover-preview::before,
-.modal:has(.profile-settings-layout) .profile-cover-preview::after,
-.modal:has(.profile-settings-layout) .profile-preview-row::before,
-.modal:has(.profile-settings-layout) .profile-preview-row::after{
-  content:none!important;display:none!important;pointer-events:none!important;
-}
-.modal:has(.profile-settings-layout) .profile-cover-preview{
-  position:relative!important;z-index:2147483647!important;
-  opacity:1!important;visibility:visible!important;filter:none!important;
-  transform:translateZ(0)!important;
-  border-radius:17px 17px 0 0!important;
-  background-color:#343a52!important;background-size:cover!important;
-  background-position:center center!important;
-}
-.modal:has(.profile-settings-layout) .cover-tools{
-  position:absolute!important;z-index:2147483647!important;
-}
-.modal:has(.profile-settings-layout) .profile-preview-row{
-  position:relative!important;z-index:2147483647!important;
-  opacity:1!important;visibility:visible!important;filter:none!important;
-  transform:translateZ(0)!important;
-  background:var(--panel)!important;border-radius:0 0 17px 17px!important;
-}
-.modal:has(.profile-settings-layout) .profile-edit-avatar,
-.modal:has(.profile-settings-layout) .avatar-action{
-  position:relative!important;z-index:2147483647!important;
-  opacity:1!important;visibility:visible!important;filter:none!important;
-  transform:translateZ(0)!important;isolation:isolate!important;
-  border:4px solid var(--panel)!important;
-  box-shadow:0 4px 20px #0008!important;
-}
-.modal:has(.profile-settings-layout) .profile-edit-avatar img,
-.modal:has(.profile-settings-layout) .avatar-action img{
-  position:relative!important;z-index:2147483647!important;
-  display:block!important;opacity:1!important;visibility:visible!important;
-  filter:none!important;transform:translateZ(0)!important;
-}
-
-/* Avatar is the topmost visible item; settings remain in normal flow below */
-.modal:has(.profile-settings-layout) .profile-settings-layout{
-  display:grid!important;grid-template-columns:minmax(0,1fr)!important;
-  gap:24px!important;position:relative!important;isolation:isolate!important;
-  z-index:0!important;overflow-x:hidden!important;overflow-y:auto!important;
-}
-.modal:has(.profile-settings-layout) .profile-settings-preview{
-  grid-row:1!important;position:relative!important;
-  z-index:2147483646!important;isolation:isolate!important;
-  overflow:visible!important;margin:0!important;
-}
-.modal:has(.profile-settings-layout) .profile-settings-section{
-  position:relative!important;z-index:0!important;isolation:auto!important;
-  display:block!important;clear:both!important;
-  margin:0!important;transform:none!important;
-}
-.modal:has(.profile-settings-layout) .profile-settings-section:has(#themeModeInput){
-  margin-top:0!important;padding-top:18px!important;
-}
-.modal:has(.profile-settings-layout) .profile-cover-preview{
-  position:relative!important;z-index:1!important;
-}
-.modal:has(.profile-settings-layout) .profile-preview-row{
-  position:relative!important;z-index:2!important;
-}
-.modal:has(.profile-settings-layout) .profile-edit-avatar,
-.modal:has(.profile-settings-layout) .avatar-action{
-  position:relative!important;z-index:2147483647!important;
-  isolation:isolate!important;
-}
-.modal:has(.profile-settings-layout) .profile-edit-avatar img,
-.modal:has(.profile-settings-layout) .avatar-action img{
-  position:relative!important;z-index:2147483647!important;
-}
-
-/* Clear visual separation between profile card and color customization */
-.modal:has(.profile-settings-layout) .profile-settings-preview{
-  margin-bottom:8px!important;
-}
-.modal:has(.profile-settings-layout) .profile-settings-section:has(#themeModeInput){
-  margin-top:18px!important;
-  padding:22px 18px 20px!important;
-  border-top:1px solid rgba(255,255,255,.14)!important;
-  border-radius:18px!important;
-}
-
-/* 100% zoom layout: visibly separate profile and color cards */
-.modal:has(.profile-settings-layout) .profile-settings-layout{
-  display:grid!important;
-  grid-template-columns:minmax(0,1fr)!important;
-  row-gap:30px!important;
-  column-gap:0!important;
-  padding:18px 10px 30px!important;
-  overflow-x:hidden!important;
-  overflow-y:auto!important;
-}
-.modal:has(.profile-settings-layout) .profile-settings-preview{
-  display:block!important;
-  position:relative!important;
-  z-index:2147483647!important;
-  isolation:isolate!important;
-  margin:0 0 4px!important;
-  padding:0!important;
-  border:2px solid var(--accent)!important;
-  border-radius:20px!important;
-  background:var(--panel)!important;
-  box-shadow:0 8px 26px rgba(0,0,0,.24),0 0 0 4px color-mix(in srgb,var(--accent) 12%,transparent)!important;
-}
-.modal:has(.profile-settings-layout) .profile-settings-section:has(#themeModeInput){
-  display:block!important;
-  position:relative!important;
-  z-index:1!important;
-  isolation:isolate!important;
-  margin:0!important;
-  padding:22px!important;
-  border:2px solid var(--line)!important;
-  border-radius:20px!important;
-  background:var(--panel2,var(--panel))!important;
-  box-shadow:0 8px 26px rgba(0,0,0,.20)!important;
-}
-.modal:has(.profile-settings-layout) .profile-settings-section:has(#themeModeInput)::before{
-  content:"";
-  display:block;
-  width:42px;
-  height:4px;
-  border-radius:99px;
-  background:var(--accent);
-  margin:0 0 14px;
-  opacity:.9;
-}
-@media(max-width:560px){
-  .modal:has(.profile-settings-layout) .profile-settings-layout{row-gap:24px!important;padding:12px 4px 24px!important}
-  .modal:has(.profile-settings-layout) .profile-settings-section:has(#themeModeInput){padding:17px!important}
-}
-
-
-
-/* Clean separated settings cards: 100% zoom, no stacking overlays */
-.modal:has(.profile-settings-layout) .profile-settings-layout{
-  display:grid!important;
-  grid-template-columns:minmax(0,1fr)!important;
-  grid-auto-flow:row!important;
-  align-content:start!important;
-  align-items:stretch!important;
-  gap:24px!important;
-  min-height:0!important;
-  max-height:none!important;
-  overflow-x:hidden!important;
-  overflow-y:auto!important;
-  padding:12px 8px 28px!important;
-  margin:0!important;
-  -webkit-mask:none!important;
-  mask:none!important;
-  transform:none!important;
-}
-.modal:has(.profile-settings-layout) .profile-settings-section{
-  grid-column:1!important;
-  grid-row:auto!important;
-  display:block!important;
-  position:relative!important;
-  z-index:1!important;
-  isolation:auto!important;
-  transform:none!important;
-  filter:none!important;
-  opacity:1!important;
-  visibility:visible!important;
-  width:100%!important;
-  min-height:0!important;
-  height:auto!important;
-  margin:0!important;
-  padding:20px!important;
-  background:var(--panel2,var(--panel))!important;
-  border:1px solid var(--line)!important;
-  border-radius:18px!important;
-  box-shadow:0 6px 20px rgba(0,0,0,.14)!important;
-}
-.modal:has(.profile-settings-layout) .profile-settings-section::before{display:none!important;content:none!important}
-.modal:has(.profile-settings-layout) .profile-settings-preview{
-  grid-column:1!important;
-  grid-row:1!important;
-  display:block!important;
-  position:relative!important;
-  z-index:auto!important;
-  isolation:auto!important;
-  transform:none!important;
-  filter:none!important;
-  opacity:1!important;
-  visibility:visible!important;
-  width:100%!important;
-  height:auto!important;
-  min-height:0!important;
-  margin:0!important;
-  padding:0!important;
-  overflow:hidden!important;
-  background:var(--panel)!important;
-  border:1px solid var(--line)!important;
-  border-radius:18px!important;
-  box-shadow:0 6px 20px rgba(0,0,0,.14)!important;
-}
-.modal:has(.profile-settings-layout) .profile-cover-preview{
-  display:block!important;
-  position:relative!important;
-  z-index:auto!important;
-  transform:none!important;
-  filter:none!important;
-  opacity:1!important;
-  visibility:visible!important;
-  height:136px!important;
-  min-height:136px!important;
-  background-size:cover!important;
-  background-position:center!important;
-}
-.modal:has(.profile-settings-layout) .profile-preview-row{
-  position:relative!important;
-  z-index:auto!important;
-  display:flex!important;
-  min-height:88px!important;
-  overflow:visible!important;
-  margin-top:-30px!important;
-  padding:0 18px 12px!important;
-}
-.modal:has(.profile-settings-layout) .profile-edit-avatar,
-.modal:has(.profile-settings-layout) .avatar-action{
-  position:relative!important;
-  z-index:2147483647!important;
-  isolation:isolate!important;
-  flex:0 0 82px!important;
-  width:82px!important;
-  height:82px!important;
-}
-.modal:has(.profile-settings-layout) .profile-edit-avatar img,
-.modal:has(.profile-settings-layout) .avatar-action img{
-  position:relative!important;
-  z-index:2147483647!important;
-  width:100%!important;
-  height:100%!important;
-  object-fit:cover!important;
-}
-.modal:has(.profile-settings-layout) .profile-settings-section:has(#themeModeInput){
-  grid-column:1!important;
-  grid-row:auto!important;
-  display:block!important;
-  position:relative!important;
-  z-index:0!important;
-  isolation:auto!important;
-  transform:none!important;
-  filter:none!important;
-  opacity:1!important;
-  visibility:visible!important;
-  width:100%!important;
-  min-height:0!important;
-  height:auto!important;
-  margin:0!important;
-  padding:20px!important;
-  background:var(--panel)!important;
-  border:1px solid var(--line)!important;
-  border-radius:18px!important;
-  box-shadow:0 6px 20px rgba(0,0,0,.14)!important;
-}
-@media(max-width:560px){
-  .modal:has(.profile-settings-layout) .profile-settings-layout{gap:20px!important;padding:10px 4px 24px!important}
-  .modal:has(.profile-settings-layout) .profile-cover-preview{height:120px!important;min-height:120px!important}
-}
-
 </style>
 </head>
 <body>
@@ -791,7 +511,35 @@ function showServerContext(event,server){
  const x=Math.min(event.clientX,window.innerWidth-190),y=Math.min(event.clientY,window.innerHeight-100);
  menu.style.left=Math.max(8,x)+'px';menu.style.top=Math.max(8,y)+'px';
  menu.querySelector('[data-action="invite"]').onclick=()=>{closeServerContext();showInviteModal(server)};
- menu.querySelector('[data-action="delete"]').onclick=()=>{closeServerContext();confirmDeleteServer(server)};
+ menu.que
+/* Clean rebuilt profile settings */
+.modal:has(.profile-settings-layout){width:min(780px,94vw)!important;height:min(880px,92vh)!important;max-height:92vh!important;display:flex!important;flex-direction:column!important;gap:0!important;overflow:hidden!important;padding:22px 24px 0!important;background:#111319!important}
+.modal:has(.profile-settings-layout)>h2{flex:0 0 auto!important;margin:0 0 18px!important}
+.modal:has(.profile-settings-layout) .profile-settings-layout{flex:1 1 auto!important;min-height:0!important;display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:22px!important;overflow-x:hidden!important;overflow-y:auto!important;padding:2px 5px 22px!important;margin:0!important;position:relative!important;isolation:auto!important;transform:none!important;mask:none!important;-webkit-mask:none!important}
+.modal:has(.profile-settings-layout) .profile-settings-profile-card{display:block!important;flex:0 0 auto!important;position:relative!important;z-index:20!important;isolation:isolate!important;overflow:visible!important;width:100%!important;height:auto!important;min-height:0!important;margin:0!important;padding:0 0 16px!important;border:1px solid var(--line)!important;border-radius:19px!important;background:var(--panel)!important;box-shadow:0 8px 26px #0003!important}
+.modal:has(.profile-settings-layout) .profile-cover-preview{display:block!important;position:relative!important;z-index:0!important;height:158px!important;min-height:158px!important;max-height:158px!important;overflow:hidden!important;border-radius:18px 18px 0 0!important;background-size:cover!important;background-position:center!important}
+.modal:has(.profile-settings-layout) .profile-preview-row{display:flex!important;align-items:flex-end!important;gap:15px!important;position:relative!important;z-index:2147483646!important;isolation:isolate!important;overflow:visible!important;margin:-42px 0 0!important;padding:0 20px!important;min-height:94px!important}
+.modal:has(.profile-settings-layout) #avatarAction,.modal:has(.profile-settings-layout) .profile-edit-avatar,.modal:has(.profile-settings-layout) .avatar-action{display:grid!important;place-items:center!important;position:relative!important;z-index:2147483647!important;isolation:isolate!important;width:88px!important;height:88px!important;min-width:88px!important;min-height:88px!important;max-width:88px!important;max-height:88px!important;flex:0 0 88px!important;padding:0!important;border:5px solid var(--panel)!important;border-radius:50%!important;overflow:hidden!important;background:#242735!important;color:white!important;box-shadow:0 5px 20px #0006!important}
+.modal:has(.profile-settings-layout) #avatarAction img,.modal:has(.profile-settings-layout) .avatar-action img{display:block!important;position:relative!important;z-index:2147483647!important;width:100%!important;height:100%!important;object-fit:cover!important;border-radius:50%!important}
+.modal:has(.profile-settings-layout) .profile-preview-name{position:relative!important;z-index:2147483646!important;display:flex!important;align-items:center!important;min-width:0!important;padding:0 0 17px!important;color:var(--text)!important}
+.modal:has(.profile-settings-layout) .profile-preview-name strong{font-size:19px!important;overflow-wrap:anywhere!important}
+.modal:has(.profile-settings-layout) .profile-name-editor{padding:12px 20px 0!important;position:relative!important;z-index:1!important}
+.modal:has(.profile-settings-layout) .profile-name-editor .field{margin:0!important}
+.modal:has(.profile-settings-layout) .profile-settings-section.profile-color-card{display:block!important;flex:0 0 auto!important;position:relative!important;z-index:1!important;isolation:auto!important;transform:none!important;filter:none!important;opacity:1!important;visibility:visible!important;width:100%!important;height:auto!important;min-height:0!important;margin:0!important;padding:20px!important;border:1px solid var(--line)!important;border-radius:19px!important;background:var(--panel)!important;box-shadow:0 8px 26px #0003!important}
+.modal:has(.profile-settings-layout) .profile-color-card h3{margin:0 0 16px!important;font-size:15px!important;font-weight:750!important;color:var(--text)!important}
+.modal:has(.profile-settings-layout) .profile-color-card .field{margin:0 0 14px!important}
+.modal:has(.profile-settings-layout) .profile-color-row{display:flex!important;align-items:center!important;flex-wrap:wrap!important;gap:12px!important;min-height:54px!important;margin:10px 0!important;padding:9px 12px!important;border:1px solid var(--line)!important;border-radius:13px!important;background:var(--panel2)!important}
+.modal:has(.profile-settings-layout) .profile-color-row>label{flex:0 0 92px!important;color:var(--text)!important;font-size:13px!important}
+.modal:has(.profile-settings-layout) .profile-color-row input[type=color]{display:block!important;flex:0 0 42px!important;width:42px!important;height:34px!important;padding:2px!important;border:1px solid var(--line)!important;border-radius:8px!important;background:transparent!important}
+.modal:has(.profile-settings-layout) .color-swatches{display:flex!important;align-items:center!important;gap:8px!important;flex-wrap:wrap!important}
+.modal:has(.profile-settings-layout) .color-swatches button{display:block!important;flex:0 0 25px!important;width:25px!important;height:25px!important;min-width:25px!important;min-height:25px!important;padding:0!important;border:2px solid #ffffff55!important;border-radius:50%!important;background:var(--swatch)!important;box-shadow:0 1px 5px #0004!important}
+.modal:has(.profile-settings-layout) .color-swatches button:before,.modal:has(.profile-settings-layout) .color-swatches button:after{content:none!important;display:none!important}
+.modal:has(.profile-settings-layout) .profile-settings-layout input:not([type=color]),.modal:has(.profile-settings-layout) .profile-settings-layout select{width:100%!important;min-height:44px!important;border-radius:12px!important;background:var(--panel2)!important;color:var(--text)!important;border:1px solid var(--line)!important;padding:10px 13px!important}
+.modal:has(.profile-settings-layout)>.status{flex:0 0 auto!important}
+.modal:has(.profile-settings-layout)>.modal-actions{flex:0 0 auto!important;position:relative!important;bottom:auto!important;margin:10px -24px 0!important;padding:14px 24px 18px!important;border-top:1px solid var(--line)!important;background:#0c0e13!important;z-index:30!important}
+.modal:has(.profile-settings-layout)>.modal-actions button{min-height:48px!important;border-radius:14px!important}
+@media(max-width:560px){.modal:has(.profile-settings-layout){width:96vw!important;height:92vh!important;padding:16px 14px 0!important}.modal:has(.profile-settings-layout) .profile-cover-preview{height:132px!important;min-height:132px!important;max-height:132px!important}.modal:has(.profile-settings-layout) .profile-preview-row{padding:0 14px!important}.modal:has(.profile-settings-layout) .profile-name-editor{padding:10px 14px 0!important}.modal:has(.profile-settings-layout) .profile-settings-section.profile-color-card{padding:16px!important}.modal:has(.profile-settings-layout)>.modal-actions{margin:10px -14px 0!important;padding:12px 14px 16px!important}}
+rySelector('[data-action="delete"]').onclick=()=>{closeServerContext();confirmDeleteServer(server)};
  setTimeout(()=>document.addEventListener('click',closeServerContext,{once:true}),0);
 }
 function confirmDeleteServer(server){
@@ -872,7 +620,7 @@ function openUserSettings(){
  const p=ownProfile,name=p.username||'';
  const coverColor=safeColor(p.banner_color,'#5865f2');
  const coverStyle=p.banner_url?'background-image:url(&quot;'+esc(p.banner_url)+'&quot;);background-size:cover;background-position:center;background-color:'+coverColor:'background:'+coverColor;
- const fields='<div class="profile-settings-layout"><div class="profile-settings-preview glass-card"><div class="profile-cover-preview" id="profileCoverPreview" style="'+coverStyle+'"><button class="cover-tools glass-button" id="coverTools" type="button" aria-label="Cài đặt ảnh bìa">⚙</button></div><div class="profile-preview-row"><button class="profile-edit-avatar avatar-action" id="avatarAction" type="button" aria-label="Tùy chọn ảnh đại diện">'+(p.avatar_url?'<img src="'+esc(p.avatar_url)+'" alt="">':esc(initials(name)))+'</button><div class="profile-preview-name"><strong id="profilePreviewName">'+esc(name)+'</strong></div></div></div><div class="profile-settings-section glass-card"><h3>Thông tin cá nhân</h3><div class="field"><label for="profileNameInput">Tên hiển thị</label><input id="profileNameInput" maxlength="32" value="'+esc(name)+'" placeholder="Tên của bạn"></div></div><div class="profile-settings-section glass-card"><h3>Màu sắc giao diện</h3><div class="field"><label for="themeModeInput">Chế độ hiển thị</label><select id="themeModeInput"><option value="dark" '+(p.theme_mode==='dark'?'selected':'')+'>Tối</option><option value="light" '+(p.theme_mode==='light'?'selected':'')+'>Sáng</option><option value="custom" '+(p.theme_mode==='custom'?'selected':'')+'>Tùy chỉnh</option></select></div><div class="profile-color-row"><label>Màu nhấn</label><input id="accentColorInput" type="color" value="'+safeColor(p.accent_color,'#5865f2')+'"><div class="color-swatches" data-target="accentColorInput"><button type="button" data-color="#5865F2" style="--swatch:#5865F2" aria-label="Tím xanh"></button><button type="button" data-color="#19A7CE" style="--swatch:#19A7CE" aria-label="Xanh biển"></button><button type="button" data-color="#30B77A" style="--swatch:#30B77A" aria-label="Xanh lá"></button><button type="button" data-color="#E45B91" style="--swatch:#E45B91" aria-label="Hồng"></button><button type="button" data-color="#E69A38" style="--swatch:#E69A38" aria-label="Cam"></button></div></div><div class="profile-color-row"><label>Màu nền</label><input id="backgroundColorInput" type="color" value="'+safeColor(p.background_color,'#000000')+'"><div class="color-swatches" data-target="backgroundColorInput"><button type="button" data-color="#080B14" style="--swatch:#080B14"></button><button type="button" data-color="#101827" style="--swatch:#101827"></button><button type="button" data-color="#171321" style="--swatch:#171321"></button><button type="button" data-color="#17211D" style="--swatch:#17211D"></button></div></div><div class="profile-color-row"><label>Màu khung</label><input id="panelColorInput" type="color" value="'+safeColor(p.panel_color,'#08090b')+'"><div class="color-swatches" data-target="panelColorInput"><button type="button" data-color="#111827" style="--swatch:#111827"></button><button type="button" data-color="#202438" style="--swatch:#202438"></button><button type="button" data-color="#241B2D" style="--swatch:#241B2D"></button><button type="button" data-color="#18302D" style="--swatch:#18302D"></button></div></div></div><input class="hidden" id="profileAvatarInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif"><input class="hidden" id="profileBannerInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif"></div>';
+ const fields='<div class="profile-settings-layout"><section class="profile-settings-preview profile-settings-profile-card"><div class="profile-cover-preview" id="profileCoverPreview" style="'+coverStyle+'"><button class="cover-tools glass-button" id="coverTools" type="button" aria-label="Cài đặt ảnh bìa">⚙</button></div><div class="profile-preview-row"><button class="profile-edit-avatar avatar-action" id="avatarAction" type="button" aria-label="Tùy chọn ảnh đại diện">'+(p.avatar_url?'<img src="'+esc(p.avatar_url)+'" alt="">':esc(initials(name)))+'</button><div class="profile-preview-name"><strong id="profilePreviewName">'+esc(name)+'</strong></div></div><div class="profile-name-editor"><div class="field"><label for="profileNameInput">Tên hiển thị</label><input id="profileNameInput" maxlength="32" value="'+esc(name)+'" placeholder="Tên của bạn"></div></div></section><section class="profile-settings-section profile-color-card"><h3>Màu sắc giao diện</h3><div class="field"><label for="themeModeInput">Chế độ hiển thị</label><select id="themeModeInput"><option value="dark" '+(p.theme_mode==='dark'?'selected':'')+'>Tối</option><option value="light" '+(p.theme_mode==='light'?'selected':'')+'>Sáng</option><option value="custom" '+(p.theme_mode==='custom'?'selected':'')+'>Tùy chỉnh</option></select></div><div class="profile-color-row"><label>Màu nhấn</label><input id="accentColorInput" type="color" value="'+safeColor(p.accent_color,'#5865f2')+'"><div class="color-swatches" data-target="accentColorInput"><button type="button" data-color="#5865F2" style="--swatch:#5865F2"></button><button type="button" data-color="#19A7CE" style="--swatch:#19A7CE"></button><button type="button" data-color="#30B77A" style="--swatch:#30B77A"></button><button type="button" data-color="#E45B91" style="--swatch:#E45B91"></button><button type="button" data-color="#E69A38" style="--swatch:#E69A38"></button></div></div><div class="profile-color-row"><label>Màu nền</label><input id="backgroundColorInput" type="color" value="'+safeColor(p.background_color,'#000000')+'"><div class="color-swatches" data-target="backgroundColorInput"><button type="button" data-color="#080B14" style="--swatch:#080B14"></button><button type="button" data-color="#101827" style="--swatch:#101827"></button><button type="button" data-color="#171321" style="--swatch:#171321"></button><button type="button" data-color="#17211D" style="--swatch:#17211D"></button></div></div><div class="profile-color-row"><label>Màu khung</label><input id="panelColorInput" type="color" value="'+safeColor(p.panel_color,'#08090b')+'"><div class="color-swatches" data-target="panelColorInput"><button type="button" data-color="#111827" style="--swatch:#111827"></button><button type="button" data-color="#202438" style="--swatch:#202438"></button><button type="button" data-color="#241B2D" style="--swatch:#241B2D"></button><button type="button" data-color="#18302D" style="--swatch:#18302D"></button></div></div></section><input class="hidden" id="profileAvatarInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif"><input class="hidden" id="profileBannerInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif"></div>';
  openModal('Cài đặt chính',fields,'Lưu thay đổi',async()=>{
   const username=$('profileNameInput').value.trim();
   const avatarFile=$('profileAvatarInput').files?.[0],bannerFile=$('profileBannerInput').files?.[0];
