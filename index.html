@@ -1550,6 +1550,39 @@ body{background:var(--panel)!important}
  #modalRoot .modal:has(.profile-settings-layout)>.profile-settings-layout{max-height:calc(92vh - 16px)!important;padding:0!important}
 }
 
+
+/* Subtle Samsung-style scroll-edge blur (neutral blur, no glass tint) */
+#modalRoot .modal:has(.profile-settings-layout)>.profile-settings-layout{
+ position:relative!important;
+}
+#modalRoot .modal:has(.profile-settings-layout)>.profile-settings-layout::before,
+#modalRoot .modal:has(.profile-settings-layout)>.profile-settings-layout::after{
+ content:""!important;
+ display:block!important;
+ position:sticky!important;
+ z-index:5!important;
+ flex:0 0 18px!important;
+ height:18px!important;
+ width:100%!important;
+ pointer-events:none!important;
+ border:0!important;
+ border-radius:0!important;
+ background:transparent!important;
+ -webkit-backdrop-filter:blur(4px)!important;
+ backdrop-filter:blur(4px)!important;
+ -webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 75%)!important;
+ mask-image:linear-gradient(to bottom,transparent 0%,#000 75%)!important;
+}
+#modalRoot .modal:has(.profile-settings-layout)>.profile-settings-layout::before{
+ top:0!important;
+ margin:0 0 -18px!important;
+}
+#modalRoot .modal:has(.profile-settings-layout)>.profile-settings-layout::after{
+ bottom:0!important;
+ margin:-18px 0 0!important;
+ transform:scaleY(-1)!important;
+}
+
 /* Final Liquid Glass finish for profile settings */
 #modalRoot .modal:has(.profile-settings-layout){
  background:
