@@ -490,6 +490,33 @@ body{background:#000}
   display:block!important;opacity:1!important;visibility:visible!important;
   filter:none!important;transform:translateZ(0)!important;
 }
+
+/* Keep media on the highest layer inside its own card; never cover customization */
+.modal:has(.profile-settings-layout) .profile-settings-layout{
+  display:grid!important;gap:22px!important;
+  isolation:isolate!important;position:relative!important;z-index:0!important;
+  overflow-x:hidden!important;overflow-y:auto!important;
+}
+.modal:has(.profile-settings-layout) .profile-settings-preview{
+  position:relative!important;z-index:0!important;
+  isolation:isolate!important;overflow:visible!important;
+}
+.modal:has(.profile-settings-layout) .profile-settings-section{
+  position:relative!important;z-index:1!important;
+  isolation:isolate!important;margin-top:2px!important;
+  clear:both!important;transform:none!important;
+}
+.modal:has(.profile-settings-layout) .profile-settings-section:has(#themeModeInput){
+  margin-top:4px!important;padding-top:20px!important;
+}
+.modal:has(.profile-settings-layout) .profile-cover-preview,
+.modal:has(.profile-settings-layout) .profile-preview-row,
+.modal:has(.profile-settings-layout) .profile-edit-avatar,
+.modal:has(.profile-settings-layout) .avatar-action,
+.modal:has(.profile-settings-layout) .profile-edit-avatar img,
+.modal:has(.profile-settings-layout) .avatar-action img{
+  z-index:2147483647!important;
+}
 </style>
 </head>
 <body>
