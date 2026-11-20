@@ -666,7 +666,7 @@ function setStatus(id,msg){$(id).textContent=msg||''}
 function showAuth(){ $('authView').classList.remove('hidden');$('appView').classList.add('hidden')}
 function showApp(){ $('authView').classList.add('hidden');$('appView').classList.remove('hidden')}
 function openModal(title,fields,submitText,onSubmit){
- const root=$('modalRoot');root.innerHTML='<div class="modal-backdrop"><div class="modal"><h2>'+esc(title)+'</h2>'+fields+'<div class="status" id="modalStatus"></div><div class="modal-actions"><button class="ghost" id="modalCancel">Hủy</button><button class="primary" id="modalSubmit">'+esc(submitText)+'</button></div></div></div>';
+ const root=$('modalRoot');root.innerHTML='<div class="modal-backdrop"><div class="modal'+(fields.includes('profile-settings-layout')?' profile-settings-modal':'')+'"><h2>'+esc(title)+'</h2>'+fields+'<div class="status" id="modalStatus"></div><div class="modal-actions"><button class="ghost" id="modalCancel">Hủy</button><button class="primary" id="modalSubmit">'+esc(submitText)+'</button></div></div></div>';
  root.querySelector('.modal-backdrop').addEventListener('click',e=>{if(e.target.classList.contains('modal-backdrop'))root.innerHTML=''});
  $('modalCancel').onclick=()=>root.innerHTML='';
  $('modalSubmit').onclick=async()=>{const b=$('modalSubmit');b.disabled=true;try{await onSubmit()}catch(e){setStatus('modalStatus',e.message||'Có lỗi xảy ra')}finally{b.disabled=false}};
@@ -1091,38 +1091,33 @@ $('callBtn').onclick=startCall;
 .call-overlay.voice-only .call-tile video[data-call-source="camera"]{max-height:18vh;object-fit:cover}
 @media(max-width:600px){.call-settings-panel{top:58px;right:10px;padding:13px}.call-settings-grid{grid-template-columns:1fr 1fr}.call-volume-row{grid-template-columns:74px minmax(70px,1fr) 38px}.call-overlay.screen-sharing .call-tile video[data-call-source="screen"]{max-height:calc(100vh - 160px)}}
 
-/* Make the profile settings title and save footer more compact */
-.modal:has(.profile-settings-layout){
-  border-left-width:.5px!important;
-  border-right-width:.5px!important;
-  border-left-color:rgba(255,255,255,.07)!important;
-  border-right-color:rgba(255,255,255,.07)!important;
-  padding-top:14px!important;
+/* Compact profile settings header and save area */
+.modal.profile-settings-modal{
+  padding:12px 18px 10px!important;
+  border-top:1px solid var(--line)!important;
+  border-bottom:1px solid var(--line)!important;
+  border-left:.5px solid rgba(255,255,255,.055)!important;
+  border-right:.5px solid rgba(255,255,255,.055)!important;
 }
-.modal:has(.profile-settings-layout)>h2{
-  font-size:16px!important;
-  line-height:1.2!important;
-  margin:0 0 10px!important;
+.modal.profile-settings-modal>h2{
+  font-size:14px!important;
+  line-height:1.15!important;
+  margin:0 0 7px!important;
+  padding:0!important;
 }
-.modal:has(.profile-settings-layout)>.modal-actions{
-  margin-top:6px!important;
-  padding:8px 24px 10px!important;
+.modal.profile-settings-modal>.profile-settings-layout{gap:12px!important}
+.modal.profile-settings-modal>.modal-actions{
+  margin:5px 0 0!important;
+  padding:5px 12px 2px!important;
+  min-height:0!important;
 }
-.modal:has(.profile-settings-layout)>.modal-actions button{
-  min-height:40px!important;
-  height:40px!important;
-  padding:0 20px!important;
-  border-radius:12px!important;
-  font-size:13px!important;
+.modal.profile-settings-modal>.modal-actions button{
+  min-height:36px!important;height:36px!important;
+  padding:0 17px!important;border-radius:10px!important;font-size:12px!important;
 }
 @media(max-width:560px){
-  .modal:has(.profile-settings-layout){padding-top:12px!important}
-  .modal:has(.profile-settings-layout)>.modal-actions{
-    margin-top:6px!important;
-    padding:7px 14px 9px!important;
-  }
-  .modal:has(.profile-settings-layout)>.modal-actions button{
-    min-height:38px!important;height:38px!important;padding:0 17px!important;
-  }
+  .modal.profile-settings-modal{padding:10px 12px 8px!important}
+  .modal.profile-settings-modal>.modal-actions{padding:4px 7px 1px!important}
+  .modal.profile-settings-modal>.modal-actions button{min-height:35px!important;height:35px!important}
 }
 </style>
