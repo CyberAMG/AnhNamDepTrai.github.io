@@ -487,6 +487,41 @@ body{background:#000}
 .composer .send:focus-visible{outline:2px solid #aeb8ff!important;outline-offset:3px!important}
 @media(prefers-reduced-motion:reduce){.composer .send{transition:none!important}}
 
+
+/* Profile view: keep the full cover visible; center avatar and name in one column */
+.profile-page-modal .profile-page-cover{
+  position:relative;
+  z-index:0;
+  height:170px;
+  flex:none;
+}
+.profile-page-modal .profile-page-content{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-align:center;
+  padding:0 22px 22px;
+}
+.profile-page-modal .profile-page-avatar{
+  position:relative;
+  z-index:1;
+  flex:none;
+  margin:20px 0 0;
+  border:0;
+  box-shadow:none;
+}
+.profile-page-modal .profile-page-content h2{
+  width:100%;
+  margin:12px 0 0;
+  text-align:center;
+  overflow-wrap:anywhere;
+}
+.profile-page-modal .profile-page-actions{
+  width:100%;
+  justify-content:center;
+  margin-top:18px;
+}
+
 </style>
 </head>
 <body>
