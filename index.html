@@ -1032,6 +1032,22 @@ function openUserSettings(){
  }
  ['accentColorInput','backgroundColorInput','panelColorInput'].forEach(id=>$(id).addEventListener('input',previewProfileTheme));
  $('themeModeInput').addEventListener('change',previewProfileTheme);
+ let autoSaveTimer=null,autoSaveBusy=false,autoSaveAgain=false;
+ const queueAutoSave=()=>{
+  clearTimeout(autoSaveTimer);
+  autoSaveTimer=setTimeout(async()=>{
+   if(autoSaveBusy){autoSaveAgain=true;return}
+   autoSaveBusy=true;
+   try{const submit=$('modalSubmit');if(submit&&!submit.disabled)await submit.click()}
+   finally{autoSaveBusy=false;if(autoSaveAgain){autoSaveAgain=false;queueAutoSave()}}
+  },700);
+ };
+ ['profileNameInput','themeModeInput','accentColorInput','backgroundColorInput','panelColorInput'].forEach(id=>{
+  const el=$(id);el.addEventListener(el.type==='text'?'input':'change',queueAutoSave);
+ });
+ avatarInput.addEventListener('change',queueAutoSave);
+ bannerInput.addEventListener('change',queueAutoSave);
+ const bannerColor=$('profileBannerColor');if(bannerColor)bannerColor.addEventListener('input',queueAutoSave);
 }
 async function openMemberProfile(userId){if(!userId)return;if(userId===currentUser?.id)return openMyProfile();const root=$('modalRoot');root.innerHTML='<div class="modal-backdrop"><div class="modal profile-page-modal chat-member-profile-modal glass-card"><div class="profile-page-cover"></div><div class="profile-page-avatar">…</div><div class="profile-page-content"><h2>Đang tải hồ sơ...</h2></div></div></div>';try{const {data,error}=await db.from('profiles').select('id,username,avatar_url,banner_url,banner_color').eq('id',userId).maybeSingle();if(error)throw error;if(!data)throw Error('Không tìm thấy hồ sơ thành viên.');const p=data,n=p.username||'Thành viên',cover=p.banner_url?'background-image:url(&quot;'+esc(p.banner_url)+'&quot;);background-size:cover;background-position:center;background-color:'+safeColor(p.banner_color,'#5865f2'):'background:'+safeColor(p.banner_color,'#5865f2');root.innerHTML='<div class="modal-backdrop"><div class="modal profile-page-modal chat-member-profile-modal glass-card"><div class="profile-page-cover" style="'+cover+'"></div><div class="profile-page-avatar">'+(p.avatar_url?'<img src="'+esc(p.avatar_url)+'" alt="">':esc(initials(n)))+'</div><div class="profile-page-content"><h2>'+esc(n)+'</h2><div class="profile-page-actions"><button class="ghost" id="profilePageClose">Đóng</button></div></div></div></div>';$('profilePageClose').onclick=()=>root.innerHTML='';root.querySelector('.modal-backdrop').onclick=e=>{if(e.target.classList.contains('modal-backdrop'))root.innerHTML=''}}catch(e){root.innerHTML='<div class="modal-backdrop"><div class="modal"><h2>Không thể mở hồ sơ</h2><p>'+esc(e.message||'Đã xảy ra lỗi.')+'</p><div class="modal-actions"><button class="primary" id="profilePageClose">Đóng</button></div></div></div>';$('profilePageClose').onclick=()=>root.innerHTML=''}}
 function cropImageBeforeUpload(file,kind){return new Promise((resolve,reject)=>{const src=URL.createObjectURL(file),img=new Image();img.onload=()=>{const avatar=kind==='avatar',ow=avatar?640:1440,oh=avatar?640:480,base=Math.max(ow/img.naturalWidth,oh/img.naturalHeight);let zoom=1,x=0,y=0;const root=$('modalRoot');root.insertAdjacentHTML('beforeend','<div class="image-crop-layer"><div class="image-crop-card glass-card"><div class="crop-head"><strong>'+(avatar?'Căn chỉnh ảnh đại diện':'Căn chỉnh ảnh bìa')+'</strong><button type="button" id="cropCancel">×</button></div><div class="crop-preview '+(avatar?'circle':'landscape')+'" id="cropViewport"><img id="cropSource" src="'+src+'"></div><div class="crop-controls"><label>Phóng to <input id="cropZoom" type="range" min="1" max="3" step=".01" value="1"></label><label>Ngang <input id="cropX" type="range" min="-1" max="1" step=".01" value="0"></label><label>Dọc <input id="cropY" type="range" min="-1" max="1" step=".01" value="0"></label></div><div class="crop-foot"><button type="button" class="ghost" id="cropCancel2">Hủy</button><button type="button" class="primary" id="cropApply">Dùng ảnh này</button></div></div></div>');const layer=root.querySelector('.image-crop-layer'),view=$('cropViewport'),image=$('cropSource'),zi=$('cropZoom'),xi=$('cropX'),yi=$('cropY');view.style.aspectRatio=ow+'/'+oh;function preview(){const scale=base*zoom,w=img.naturalWidth*scale,h=img.naturalHeight*scale,display=view.clientWidth/ow;image.style.width=w*display+'px';image.style.height=h*display+'px';image.style.maxWidth='none';image.style.position='absolute';image.style.left='50%';image.style.top='50%';image.style.transform='translate(calc(-50% + '+(x*Math.max(0,w-ow)*display/2)+'px),calc(-50% + '+(y*Math.max(0,h-oh)*display/2)+'px))'}zi.oninput=()=>{zoom=+zi.value;preview()};xi.oninput=()=>{x=+xi.value;preview()};yi.oninput=()=>{y=+yi.value;preview()};preview();let closed=false;function close(){if(closed)return;closed=true;URL.revokeObjectURL(src);layer.remove()}$('cropCancel').onclick=$('cropCancel2').onclick=()=>{close();resolve(null)};layer.onclick=e=>{if(e.target===layer){close();resolve(null)}};$('cropApply').onclick=()=>{const canvas=document.createElement('canvas');canvas.width=ow;canvas.height=oh;const ctx=canvas.getContext('2d'),scale=base*zoom,w=img.naturalWidth*scale,h=img.naturalHeight*scale,dx=(ow-w)/2+x*Math.max(0,w-ow)/2,dy=(oh-h)/2+y*Math.max(0,h-oh)/2;if(avatar){ctx.beginPath();ctx.arc(ow/2,oh/2,ow/2,0,Math.PI*2);ctx.clip()}ctx.drawImage(img,dx,dy,w,h);canvas.toBlob(blob=>{if(!blob){close();reject(Error('Không thể xử lý ảnh.'));return}const out=new File([blob],kind+'-'+Date.now()+'.jpg',{type:'image/jpeg'});close();resolve(out)},'image/jpeg',.92)}};img.onerror=()=>{URL.revokeObjectURL(src);reject(Error('Không thể đọc ảnh.'))};img.src=src})}
@@ -1308,6 +1324,13 @@ $('callBtn').onclick=startCall;
  border-radius:18px!important;
 }
 
+/* Unified iPhone-style account settings frame */
+.modal.profile-settings-modal{box-sizing:border-box!important;width:min(780px,94vw)!important;max-height:92vh!important;padding:12px!important;border:1px solid rgba(255,255,255,.10)!important;border-radius:22px!important;overflow:hidden!important;box-shadow:0 18px 60px rgba(0,0,0,.32)!important}
+.modal.profile-settings-modal>.profile-settings-layout{min-height:0!important;max-height:calc(92vh - 58px)!important;overflow-y:auto!important;overflow-x:hidden!important;scrollbar-width:none!important;-ms-overflow-style:none!important;padding:2px!important;gap:12px!important}
+.modal.profile-settings-modal>.profile-settings-layout::-webkit-scrollbar,.modal.profile-settings-modal::-webkit-scrollbar,.modal.profile-settings-modal *::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}
+.modal.profile-settings-modal .profile-settings-profile-card,.modal.profile-settings-modal .profile-settings-section,.modal.profile-settings-modal .profile-settings-preview{border:1px solid rgba(255,255,255,.10)!important;border-radius:18px!important;box-shadow:none!important}
+.modal.profile-settings-modal>.status{padding:0 4px!important;min-height:18px!important}
+.modal.profile-settings-modal>.modal-actions{display:none!important}
 /* Refined send control: clear hit area, accent-driven color, precise arrow motion */
 .composer-wrap{position:relative;z-index:2;isolation:isolate}
 #messageForm{position:relative;z-index:2}
