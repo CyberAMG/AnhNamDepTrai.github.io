@@ -1509,4 +1509,33 @@ body{background:var(--panel)!important}
 #modalRoot .modal:has(.profile-settings-layout) .profile-settings-profile-card{border-radius:16px!important}
 #modalRoot .modal:has(.profile-settings-layout)>.status{border:0!important;box-shadow:none!important}
 #modalRoot .modal:has(.profile-settings-layout)::before{content:none!important;display:none!important}
+
+/* Fit the settings frame to its content, scrolling only when viewport space runs out */
+#modalRoot .modal:has(.profile-settings-layout){
+ display:flex!important;
+ flex-direction:column!important;
+ align-items:stretch!important;
+ justify-content:flex-start!important;
+ width:min(780px,94vw)!important;
+ height:auto!important;
+ max-height:92vh!important;
+ min-height:0!important;
+ padding:12px!important;
+}
+#modalRoot .modal:has(.profile-settings-layout)>.profile-settings-layout{
+ display:grid!important;
+ flex:0 1 auto!important;
+ width:100%!important;
+ height:auto!important;
+ min-height:0!important;
+ max-height:calc(92vh - 48px)!important;
+ overflow-x:hidden!important;
+ overflow-y:auto!important;
+}
+#modalRoot .modal:has(.profile-settings-layout)>.status:empty,
+#modalRoot .modal:has(.profile-settings-layout)>.modal-actions{display:none!important}
+@media(max-width:560px){
+ #modalRoot .modal:has(.profile-settings-layout){width:94vw!important;max-height:92vh!important;padding:10px!important}
+ #modalRoot .modal:has(.profile-settings-layout)>.profile-settings-layout{max-height:calc(92vh - 40px)!important}
+}
 </style>
