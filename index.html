@@ -336,7 +336,7 @@ body{background:#000}
  white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.55;
 }
 
-/* Profile preview: image areas are independent and never masked or overlapped */
+/* Unified profile card: cover and avatar live inside one stable surface */
 .modal:has(.profile-settings-layout) .profile-settings-layout{
   flex:1 1 auto!important;min-height:0!important;max-height:none!important;
   overflow-x:hidden!important;overflow-y:auto!important;
@@ -347,18 +347,21 @@ body{background:#000}
 .modal:has(.profile-settings-layout) .profile-settings-preview{
   display:block!important;visibility:visible!important;opacity:1!important;
   position:relative!important;isolation:isolate!important;
-  box-sizing:border-box!important;width:100%!important;height:auto!important;
-  min-height:0!important;flex:0 0 auto!important;
-  overflow:visible!important;clip-path:none!important;transform:none!important;
-  margin:0!important;border-radius:18px!important;
+  box-sizing:border-box!important;width:100%!important;
+  height:auto!important;min-height:0!important;flex:0 0 auto!important;
+  margin:0!important;padding:0!important;
+  overflow:hidden!important;clip-path:none!important;transform:none!important;
+  border:1px solid var(--line)!important;border-radius:18px!important;
+  background:var(--panel)!important;
 }
 .modal:has(.profile-settings-layout) .profile-cover-preview{
   display:block!important;visibility:visible!important;opacity:1!important;
   position:relative!important;z-index:0!important;
   box-sizing:border-box!important;width:100%!important;
-  height:152px!important;min-height:152px!important;max-height:none!important;
-  margin:0!important;border-radius:17px 17px 0 0!important;
-  overflow:visible!important;clip-path:none!important;
+  height:156px!important;min-height:156px!important;max-height:156px!important;
+  margin:0!important;padding:0!important;
+  border:0!important;border-radius:0!important;
+  overflow:hidden!important;clip-path:none!important;
   background-size:cover!important;background-position:center!important;
 }
 .modal:has(.profile-settings-layout) .cover-tools{
@@ -366,26 +369,25 @@ body{background:#000}
 }
 .modal:has(.profile-settings-layout) .profile-preview-row{
   display:flex!important;visibility:visible!important;opacity:1!important;
-  position:relative!important;z-index:2!important;
+  position:relative!important;z-index:1!important;
   box-sizing:border-box!important;width:100%!important;
-  min-height:118px!important;height:auto!important;
+  min-height:116px!important;height:auto!important;
   margin:0!important;padding:16px 20px 18px!important;
   gap:16px!important;align-items:center!important;
-  overflow:visible!important;clip-path:none!important;
-  transform:none!important;
+  overflow:visible!important;clip-path:none!important;transform:none!important;
+  background:var(--panel)!important;
 }
 .modal:has(.profile-settings-layout) .profile-edit-avatar,
 .modal:has(.profile-settings-layout) .avatar-action{
   display:grid!important;visibility:visible!important;opacity:1!important;
-  position:relative!important;z-index:3!important;
-  box-sizing:border-box!important;
+  position:relative!important;z-index:2!important;box-sizing:border-box!important;
   width:88px!important;height:88px!important;
   min-width:88px!important;min-height:88px!important;
   max-width:88px!important;max-height:88px!important;
   flex:0 0 88px!important;margin:0!important;padding:0!important;
-  border:5px solid var(--panel)!important;border-radius:50%!important;
-  overflow:hidden!important;clip-path:circle(50%)!important;
-  transform:none!important;
+  border:4px solid var(--panel2)!important;border-radius:50%!important;
+  overflow:hidden!important;clip-path:circle(50%)!important;transform:none!important;
+  box-shadow:0 3px 15px #0005!important;
 }
 .modal:has(.profile-settings-layout) .profile-edit-avatar img,
 .modal:has(.profile-settings-layout) .avatar-action img{
@@ -415,10 +417,10 @@ body{background:#000}
 }
 @media(max-width:560px){
   .modal:has(.profile-settings-layout) .profile-cover-preview{
-    height:132px!important;min-height:132px!important;
+    height:136px!important;min-height:136px!important;max-height:136px!important;
   }
   .modal:has(.profile-settings-layout) .profile-preview-row{
-    min-height:110px!important;padding:14px 14px 16px!important;gap:13px!important;
+    min-height:104px!important;padding:14px 14px 16px!important;gap:13px!important;
   }
   .modal:has(.profile-settings-layout) .profile-edit-avatar,
   .modal:has(.profile-settings-layout) .avatar-action{
