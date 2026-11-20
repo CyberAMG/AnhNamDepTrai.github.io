@@ -1018,6 +1018,7 @@ async function startCall(){
   await livekitRoom.connect(data.serverUrl,data.token);
   callTile(currentUser.id);
   livekitRoom.remoteParticipants.forEach(participant=>{callTile(participant.identity);participant.trackPublications.forEach(publication=>{if(publication.isSubscribed&&publication.track)attachCallTrack(publication.track,participant)})});
+  applyReceiveQuality();syncCallLayout();renderCallSettings();
   await livekitRoom.localParticipant.setMicrophoneEnabled(true);callMicOn=true;
   $('callMic').textContent='🎙';$('callMic').title='Tắt mic';$('callMic').classList.add('is-on');$('callMic').classList.remove('is-muted');callTile(currentUser.id);callStatus('Đã vào phòng thoại • Chờ thành viên khác tham gia');
  }catch(e){callStatus('Lỗi kết nối: '+(e.message||'Không rõ nguyên nhân'));if(livekitRoom){try{await livekitRoom.disconnect()}catch{}livekitRoom=null}livekitCallChannelId=null;}finally{callConnecting=false}
