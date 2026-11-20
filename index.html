@@ -525,6 +525,17 @@ body{background:#000}
 .modal:has(.profile-settings-layout) .avatar-action img{
   position:relative!important;z-index:2147483647!important;
 }
+
+/* Clear visual separation between profile card and color customization */
+.modal:has(.profile-settings-layout) .profile-settings-preview{
+  margin-bottom:8px!important;
+}
+.modal:has(.profile-settings-layout) .profile-settings-section:has(#themeModeInput){
+  margin-top:18px!important;
+  padding:22px 18px 20px!important;
+  border-top:1px solid rgba(255,255,255,.14)!important;
+  border-radius:18px!important;
+}
 </style>
 </head>
 <body>
