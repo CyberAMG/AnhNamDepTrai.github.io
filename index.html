@@ -1090,4 +1090,39 @@ $('callBtn').onclick=startCall;
 .call-overlay.voice-only .call-avatar{width:76px;height:76px;font-size:28px}
 .call-overlay.voice-only .call-tile video[data-call-source="camera"]{max-height:18vh;object-fit:cover}
 @media(max-width:600px){.call-settings-panel{top:58px;right:10px;padding:13px}.call-settings-grid{grid-template-columns:1fr 1fr}.call-volume-row{grid-template-columns:74px minmax(70px,1fr) 38px}.call-overlay.screen-sharing .call-tile video[data-call-source="screen"]{max-height:calc(100vh - 160px)}}
+
+/* Make the profile settings title and save footer more compact */
+.modal:has(.profile-settings-layout){
+  border-left-width:.5px!important;
+  border-right-width:.5px!important;
+  border-left-color:rgba(255,255,255,.07)!important;
+  border-right-color:rgba(255,255,255,.07)!important;
+  padding-top:14px!important;
+}
+.modal:has(.profile-settings-layout)>h2{
+  font-size:16px!important;
+  line-height:1.2!important;
+  margin:0 0 10px!important;
+}
+.modal:has(.profile-settings-layout)>.modal-actions{
+  margin-top:6px!important;
+  padding:8px 24px 10px!important;
+}
+.modal:has(.profile-settings-layout)>.modal-actions button{
+  min-height:40px!important;
+  height:40px!important;
+  padding:0 20px!important;
+  border-radius:12px!important;
+  font-size:13px!important;
+}
+@media(max-width:560px){
+  .modal:has(.profile-settings-layout){padding-top:12px!important}
+  .modal:has(.profile-settings-layout)>.modal-actions{
+    margin-top:6px!important;
+    padding:7px 14px 9px!important;
+  }
+  .modal:has(.profile-settings-layout)>.modal-actions button{
+    min-height:38px!important;height:38px!important;padding:0 17px!important;
+  }
+}
 </style>
