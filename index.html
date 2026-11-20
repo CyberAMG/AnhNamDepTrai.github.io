@@ -1302,5 +1302,14 @@ $('callBtn').onclick=startCall;
  .member-dock{margin:7px 0}
  .member-panel{border-radius:15px 0 0 15px;padding:16px 10px}
 }
+
+/* Blend member drawer edges into the same deep background as the channel sidebar */
+.member-panel{
+ border-color:#08090b!important;
+ border-left-color:#08090b!important;
+ background:#08090b!important;
+}
+.member-resize-edge{background:transparent!important}
+.member-resize-edge::after{background:transparent!important;box-shadow:none!important}
 @media(prefers-reduced-motion:reduce){.member-panel,.member-resize-edge::after{transition:none!important}}
 </style>
