@@ -536,6 +536,56 @@ body{background:#000}
   border-top:1px solid rgba(255,255,255,.14)!important;
   border-radius:18px!important;
 }
+
+/* 100% zoom layout: visibly separate profile and color cards */
+.modal:has(.profile-settings-layout) .profile-settings-layout{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  row-gap:30px!important;
+  column-gap:0!important;
+  padding:18px 10px 30px!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+}
+.modal:has(.profile-settings-layout) .profile-settings-preview{
+  display:block!important;
+  position:relative!important;
+  z-index:2147483647!important;
+  isolation:isolate!important;
+  margin:0 0 4px!important;
+  padding:0!important;
+  border:2px solid var(--accent)!important;
+  border-radius:20px!important;
+  background:var(--panel)!important;
+  box-shadow:0 8px 26px rgba(0,0,0,.24),0 0 0 4px color-mix(in srgb,var(--accent) 12%,transparent)!important;
+}
+.modal:has(.profile-settings-layout) .profile-settings-section:has(#themeModeInput){
+  display:block!important;
+  position:relative!important;
+  z-index:1!important;
+  isolation:isolate!important;
+  margin:0!important;
+  padding:22px!important;
+  border:2px solid var(--line)!important;
+  border-radius:20px!important;
+  background:var(--panel2,var(--panel))!important;
+  box-shadow:0 8px 26px rgba(0,0,0,.20)!important;
+}
+.modal:has(.profile-settings-layout) .profile-settings-section:has(#themeModeInput)::before{
+  content:"";
+  display:block;
+  width:42px;
+  height:4px;
+  border-radius:99px;
+  background:var(--accent);
+  margin:0 0 14px;
+  opacity:.9;
+}
+@media(max-width:560px){
+  .modal:has(.profile-settings-layout) .profile-settings-layout{row-gap:24px!important;padding:12px 4px 24px!important}
+  .modal:has(.profile-settings-layout) .profile-settings-section:has(#themeModeInput){padding:17px!important}
+}
+
 </style>
 </head>
 <body>
@@ -817,28 +867,3 @@ db.auth.onAuthStateChange(async(event,session)=>{if(event==='SIGNED_OUT'){curren
 </script>
 </body>
 </html>
-
-/* Separate profile preview and color settings into independent cards */
-.modal:has(.profile-settings-layout) .profile-settings-layout{
-  display:grid;
-  grid-template-columns:minmax(0,1fr);
-  gap:18px;
-}
-.modal:has(.profile-settings-layout) .profile-settings-preview{
-  position:relative;
-  z-index:2147483647;
-  isolation:isolate;
-  margin:0;
-  border:1px solid var(--line);
-  border-radius:18px;
-  overflow:hidden;
-  box-shadow:0 8px 28px rgba(0,0,0,.18);
-}
-.modal:has(.profile-settings-layout) .profile-settings-section{
-  position:relative;
-  z-index:1;
-  margin:0;
-  border:1px solid var(--line);
-  border-radius:18px;
-  box-shadow:0 6px 22px rgba(0,0,0,.14);
-}
