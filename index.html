@@ -1458,13 +1458,12 @@ body{background:var(--panel)!important}
 .member-resize-edge{background:transparent!important}
 .member-resize-edge::after{background:transparent!important;box-shadow:none!important}
 @media(prefers-reduced-motion:reduce){.member-panel,.member-resize-edge::after{transition:none!important}}
-</style>
 
-/* Final correction: hairline bottom edge and rounded inner corners */
+/* Profile settings: subtle bottom edge and persistent rounded scroll viewport */
 .modal.profile-settings-modal{
  box-sizing:border-box!important;
- border:1px solid rgba(255,255,255,.075)!important;
- border-bottom:1px solid rgba(255,255,255,.075)!important;
+ border:1px solid rgba(255,255,255,.055)!important;
+ border-bottom:.5px solid rgba(255,255,255,.035)!important;
  border-radius:24px!important;
  outline:0!important;
  box-shadow:none!important;
@@ -1478,25 +1477,22 @@ body{background:var(--panel)!important}
  overflow-y:auto!important;
  overflow-x:hidden!important;
  padding:8px!important;
- clip-path:inset(0 round 18px)!important;
+ clip-path:none!important;
+ -webkit-mask-image:none!important;
+ mask-image:none!important;
+ background-clip:padding-box!important;
+ scrollbar-width:none!important;
 }
+.modal.profile-settings-modal>.profile-settings-layout::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}
 .modal.profile-settings-modal .profile-settings-preview,
 .modal.profile-settings-modal .profile-settings-section{
  box-sizing:border-box!important;
- border:1px solid rgba(255,255,255,.075)!important;
+ border:1px solid rgba(255,255,255,.055)!important;
  border-radius:16px!important;
  box-shadow:none!important;
  overflow:hidden!important;
 }
-.modal.profile-settings-modal .profile-settings-profile-card{
- border-radius:16px!important;
-}
-.modal.profile-settings-modal>.status{
- border:0!important;
- box-shadow:none!important;
-}
-.modal.profile-settings-modal::before,
-.modal.profile-settings-modal::after{
- content:none!important;
- display:none!important;
-}
+.modal.profile-settings-modal .profile-settings-profile-card{border-radius:16px!important}
+.modal.profile-settings-modal>.status{border:0!important;box-shadow:none!important}
+.modal.profile-settings-modal::before,.modal.profile-settings-modal::after{content:none!important;display:none!important}
+</style>
