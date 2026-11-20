@@ -626,7 +626,7 @@ body{background:#000}
  <main class="main">
   <header class="topbar"><span id="channelTitle">Chọn một server</span><div class="top-actions"><button class="icon-btn" id="callBtn" title="Gọi thoại / video">◉</button><button class="icon-btn" id="inviteBtn" title="Mã mời">⌁</button></div></header>
   <div class="chat-scroll" id="messages"><div class="welcome"><div class="big">🎮</div><strong>Chào mừng đến Gaming Hub</strong><p>Chọn server hoặc tạo server mới để bắt đầu.</p></div></div>
-  <div class="composer-wrap"><form class="composer" id="messageForm"><input id="messageInput" autocomplete="off" placeholder="Chọn kênh để bắt đầu nhắn tin..." disabled><button class="send" type="submit" aria-label="Gửi tin nhắn"><span class="send-arrow" aria-hidden="true">→</span></button></form></div>
+  <div class="composer-wrap"><form class="composer" id="messageForm"><input id="messageInput" autocomplete="off" placeholder="Chọn kênh để bắt đầu nhắn tin..." disabled><button class="send" type="submit" aria-label="Gửi tin nhắn"><svg class="send-arrow" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button></form></div>
  </main>
  <aside class="member-panel"><div class="section-label">THÀNH VIÊN TRỰC TUYẾN</div><div id="members"></div></aside>
 </section>
@@ -1070,23 +1070,6 @@ $('callBtn').onclick=startCall;
 </body>
 </html>
 <style id="final-ui-overrides">
-#messageForm > button.send{
-  appearance:none!important;-webkit-appearance:none!important;
-  background:linear-gradient(135deg,#a5b4fc 0%,#6366f1 48%,#4338ca 100%)!important;
-  background-color:#6366f1!important;color:#fff!important;
-  border:1px solid rgba(255,255,255,.48)!important;
-  border-radius:50%!important;width:42px!important;height:42px!important;
-  min-width:42px!important;box-shadow:inset 0 1px 2px #ffffffa6,0 4px 16px #6366f188!important;
-}
-#messageForm > button.send:hover{
-  background:linear-gradient(135deg,#c7d2fe,#818cf8 48%,#4f46e5)!important;
-  filter:brightness(1.08)!important;transform:translateY(-2px) scale(1.05)!important;
-}
-#messageForm > button.send:active{
-  background:linear-gradient(135deg,#818cf8,#4338ca)!important;
-  transform:scale(.93)!important;
-}
-
 .call-head-actions{display:flex;align-items:center;gap:8px}
 .call-settings-panel{position:absolute;top:64px;right:18px;z-index:5;width:min(380px,calc(100vw - 28px));max-height:min(70vh,620px);overflow:auto;padding:16px;border:1px solid #3a3d49;border-radius:20px;background:#17191ff5;box-shadow:0 18px 55px #000b;backdrop-filter:blur(24px)}
 .call-settings-section{display:flex;flex-direction:column;gap:12px}
@@ -1177,53 +1160,40 @@ $('callBtn').onclick=startCall;
 .modal.profile-settings-modal>.modal-actions #modalSubmit{font-weight:500!important}
 @media(max-width:560px){.modal.profile-settings-modal{padding:10px 12px 7px!important}.modal.profile-settings-modal>.modal-actions{padding:3px 7px 0!important}}
 
-/* Accent-aware controls and pointer-centered tactile highlights */
-button{transition:background-color .22s ease,border-color .22s ease,color .22s ease,box-shadow .25s ease,transform .25s cubic-bezier(.2,.75,.25,1)}
-.rail-settings{
-  align-self:center!important;justify-self:center!important;margin-left:auto!important;margin-right:auto!important;
-  padding:0!important;line-height:1!important;place-items:center!important;
+/* Refined send control: clear hit area, accent-driven color, precise arrow motion */
+.composer-wrap{position:relative;z-index:2;isolation:isolate}
+#messageForm{position:relative;z-index:2}
+#messageForm>.send{
+ position:relative!important;z-index:3!important;pointer-events:auto!important;cursor:pointer!important;
+ flex:0 0 40px!important;width:40px!important;min-width:40px!important;height:40px!important;
+ padding:0!important;margin:0!important;display:grid!important;place-items:center!important;
+ appearance:none!important;-webkit-appearance:none!important;border:1px solid color-mix(in srgb,var(--accent) 72%,white 12%)!important;
+ border-radius:50%!important;background:var(--accent)!important;color:#fff!important;
+ box-shadow:0 2px 8px color-mix(in srgb,var(--accent) 24%,transparent),inset 0 1px 0 rgba(255,255,255,.16)!important;
+ transform:translateZ(0);transition:background-color .22s ease,border-color .22s ease,box-shadow .28s ease,transform .28s cubic-bezier(.22,.75,.25,1)!important;
 }
-.gear-icon{
-  width:22px;height:22px;display:flex;align-items:center;justify-content:center;
-  line-height:1;font-size:20px;transform-origin:50% 50%;
-  transition:transform .72s cubic-bezier(.16,1,.3,1),color .25s ease;
+#messageForm>.send::before{
+ content:"";position:absolute;inset:0;z-index:0;pointer-events:none;border-radius:inherit;
+ background:radial-gradient(circle at var(--spot-x,50%) var(--spot-y,50%),rgba(255,255,255,.22),transparent 68%);
+ opacity:0;transition:opacity .24s ease;
 }
-.rail-settings::after{
-  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
-  background:radial-gradient(ellipse 58% 58% at var(--spot-x,50%) var(--spot-y,50%),rgba(255,255,255,.2),transparent 75%);
-  opacity:0;transition:opacity .28s ease;
+#messageForm>.send:hover{
+ background:var(--accent)!important;color:#fff!important;
+ box-shadow:0 5px 14px color-mix(in srgb,var(--accent) 32%,transparent),inset 0 1px 0 rgba(255,255,255,.2)!important;
+ transform:translateY(-1px) scale(1.035);
 }
-.rail-settings:hover::after{opacity:1}
-.rail-settings:hover .gear-icon{transform:rotate(180deg);color:#fff}
-.rail-settings:hover{transform:translateY(-1px) scale(1.025)}
-.rail-settings:active{transform:scale(.96)}
-.send{
-  position:relative;isolation:isolate;overflow:hidden;flex:0 0 40px;
-  display:grid;place-items:center;padding:0;border:1px solid color-mix(in srgb,var(--accent) 70%,transparent);
-  background:var(--accent)!important;color:#fff!important;
-  box-shadow:0 3px 12px color-mix(in srgb,var(--accent) 25%,transparent);
-  transition:background .25s ease,box-shadow .3s ease,transform .28s cubic-bezier(.2,.8,.2,1)!important;
-}
-.send::before{
-  content:"";position:absolute;inset:0;border-radius:inherit;z-index:-1;pointer-events:none;
-  background:radial-gradient(circle at var(--spot-x,50%) var(--spot-y,50%),rgba(255,255,255,.3),transparent 62%);
-  opacity:0;transition:opacity .25s ease;
-}
-.send:hover{
-  background:var(--accent)!important;
-  box-shadow:0 5px 18px color-mix(in srgb,var(--accent) 42%,transparent),inset 0 1px 0 rgba(255,255,255,.22);
-  transform:translateY(-1px) scale(1.045);
-}
-.send:hover::before{opacity:1}
-.send:active{transform:scale(.94)}
+#messageForm>.send:hover::before{opacity:1}
+#messageForm>.send:active{transform:scale(.94)}
+#messageForm>.send:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 .send-arrow{
-  display:block;font-size:21px;line-height:1;font-weight:500;
-  transform:rotate(0deg);transition:transform .48s cubic-bezier(.16,1,.3,1);
+ position:relative;z-index:1;display:block;width:20px;height:20px;overflow:visible;
+ transform:rotate(0deg);transform-origin:50% 50%;
+ transition:transform .52s cubic-bezier(.2,.72,.25,1);
 }
-.send:hover .send-arrow{transform:rotate(-90deg)}
-.send:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+#messageForm>.send:hover .send-arrow{transform:rotate(-90deg)}
+#messageForm>.send:active .send-arrow{transform:rotate(-90deg) scale(.94)}
 @media(prefers-reduced-motion:reduce){
- .send,.send-arrow,.rail-settings,.gear-icon,.rail-settings::after{transition:none!important}
- .send:hover .send-arrow,.rail-settings:hover .gear-icon{transform:none}
+ #messageForm>.send,.send-arrow,#messageForm>.send::before{transition:none!important}
+ #messageForm>.send:hover .send-arrow{transform:none}
 }
 </style>
