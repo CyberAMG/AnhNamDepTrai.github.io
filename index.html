@@ -626,7 +626,7 @@ body{background:#000}
  <main class="main">
   <header class="topbar"><span id="channelTitle">Chọn một server</span><div class="top-actions"><button class="icon-btn" id="callBtn" title="Gọi thoại / video">◉</button><button class="icon-btn" id="inviteBtn" title="Mã mời">⌁</button></div></header>
   <div class="chat-scroll" id="messages"><div class="welcome"><div class="big">🎮</div><strong>Chào mừng đến Gaming Hub</strong><p>Chọn server hoặc tạo server mới để bắt đầu.</p></div></div>
-  <div class="composer-wrap"><form class="composer" id="messageForm"><input id="messageInput" autocomplete="off" placeholder="Chọn kênh để bắt đầu nhắn tin..." disabled><button class="send" type="submit" aria-label="Gửi tin nhắn">➤</button></form></div>
+  <div class="composer-wrap"><form class="composer" id="messageForm"><input id="messageInput" autocomplete="off" placeholder="Chọn kênh để bắt đầu nhắn tin..." disabled><button class="send" type="submit" aria-label="Gửi tin nhắn"><span class="send-arrow" aria-hidden="true">→</span></button></form></div>
  </main>
  <aside class="member-panel"><div class="section-label">THÀNH VIÊN TRỰC TUYẾN</div><div id="members"></div></aside>
 </section>
@@ -660,6 +660,21 @@ function getSupabaseClient(){
 }
 let currentUser=null,currentServer=null,currentChannel=null,messageSubscription=null,profileSyncSubscription=null,authMode='login',servers=[];
 const $=id=>document.getElementById(id);
+function trackButtonSpotlight(button){
+ if(!button)return;
+ button.addEventListener('pointermove',event=>{
+  const rect=button.getBoundingClientRect();
+  button.style.setProperty('--spot-x',((event.clientX-rect.left)/rect.width*100)+'%');
+  button.style.setProperty('--spot-y',((event.clientY-rect.top)/rect.height*100)+'%');
+ });
+ button.addEventListener('pointerleave',()=>{
+  button.style.setProperty('--spot-x','50%');
+  button.style.setProperty('--spot-y','50%');
+ });
+}
+trackButtonSpotlight($('userSettings'));
+trackButtonSpotlight(document.querySelector('.send'));
+
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function initials(s){return (s||'U').trim().slice(0,1).toUpperCase()}
 function setStatus(id,msg){$(id).textContent=msg||''}
@@ -776,6 +791,10 @@ function applyUserTheme(profile=ownProfile){
  '.server-icon,.channel,.icon-btn,.composer,.message-input,.field input,.field textarea,.field select,.profile-settings-section select,.profile-settings-section textarea,.profile-file,.server-context{background:var(--panel2)!important;color:var(--text)!important;border-color:var(--line)!important}'+
  '.server-icon.active,.primary,.send,.mini-add:hover{background:var(--accent)!important;color:#fff!important}'+
  '.ghost{color:var(--text)!important}.status,.notice{background:var(--panel2)!important;color:var(--text)!important;border-color:var(--line)!important}'+
+ 'button.primary,button.send,.server-icon.active{background:var(--accent)!important;border-color:var(--accent)!important;color:#fff!important}'+
+ '.icon-btn:hover,.mini-add:hover,.join-server-link:hover,.server-icon:hover,.channel:hover,.channel.active,.server-context button:hover,.profile-popover button:hover{background:color-mix(in srgb,var(--accent) 22%,var(--panel2))!important;border-color:color-mix(in srgb,var(--accent) 55%,var(--line))!important;color:var(--text)!important}'+
+ '.ghost:hover{background:color-mix(in srgb,var(--accent) 18%,var(--panel2))!important;color:var(--text)!important}'+
+ '.send{background:var(--accent)!important;color:#fff!important;box-shadow:0 3px 12px color-mix(in srgb,var(--accent) 28%,transparent)!important}'+
  ' .profile-hint,.profile-preview-name small,.profile-upload-note,.profile-color-row span{color:var(--muted)!important}'+
  '.modal-backdrop{background:#0009!important}';
 }
@@ -1157,4 +1176,54 @@ $('callBtn').onclick=startCall;
 }
 .modal.profile-settings-modal>.modal-actions #modalSubmit{font-weight:500!important}
 @media(max-width:560px){.modal.profile-settings-modal{padding:10px 12px 7px!important}.modal.profile-settings-modal>.modal-actions{padding:3px 7px 0!important}}
+
+/* Accent-aware controls and pointer-centered tactile highlights */
+button{transition:background-color .22s ease,border-color .22s ease,color .22s ease,box-shadow .25s ease,transform .25s cubic-bezier(.2,.75,.25,1)}
+.rail-settings{
+  align-self:center!important;justify-self:center!important;margin-left:auto!important;margin-right:auto!important;
+  padding:0!important;line-height:1!important;place-items:center!important;
+}
+.gear-icon{
+  width:22px;height:22px;display:flex;align-items:center;justify-content:center;
+  line-height:1;font-size:20px;transform-origin:50% 50%;
+  transition:transform .72s cubic-bezier(.16,1,.3,1),color .25s ease;
+}
+.rail-settings::after{
+  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:radial-gradient(ellipse 58% 58% at var(--spot-x,50%) var(--spot-y,50%),rgba(255,255,255,.2),transparent 75%);
+  opacity:0;transition:opacity .28s ease;
+}
+.rail-settings:hover::after{opacity:1}
+.rail-settings:hover .gear-icon{transform:rotate(180deg);color:#fff}
+.rail-settings:hover{transform:translateY(-1px) scale(1.025)}
+.rail-settings:active{transform:scale(.96)}
+.send{
+  position:relative;isolation:isolate;overflow:hidden;flex:0 0 40px;
+  display:grid;place-items:center;padding:0;border:1px solid color-mix(in srgb,var(--accent) 70%,transparent);
+  background:var(--accent)!important;color:#fff!important;
+  box-shadow:0 3px 12px color-mix(in srgb,var(--accent) 25%,transparent);
+  transition:background .25s ease,box-shadow .3s ease,transform .28s cubic-bezier(.2,.8,.2,1)!important;
+}
+.send::before{
+  content:"";position:absolute;inset:0;border-radius:inherit;z-index:-1;pointer-events:none;
+  background:radial-gradient(circle at var(--spot-x,50%) var(--spot-y,50%),rgba(255,255,255,.3),transparent 62%);
+  opacity:0;transition:opacity .25s ease;
+}
+.send:hover{
+  background:var(--accent)!important;
+  box-shadow:0 5px 18px color-mix(in srgb,var(--accent) 42%,transparent),inset 0 1px 0 rgba(255,255,255,.22);
+  transform:translateY(-1px) scale(1.045);
+}
+.send:hover::before{opacity:1}
+.send:active{transform:scale(.94)}
+.send-arrow{
+  display:block;font-size:21px;line-height:1;font-weight:500;
+  transform:rotate(0deg);transition:transform .48s cubic-bezier(.16,1,.3,1);
+}
+.send:hover .send-arrow{transform:rotate(-90deg)}
+.send:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+@media(prefers-reduced-motion:reduce){
+ .send,.send-arrow,.rail-settings,.gear-icon,.rail-settings::after{transition:none!important}
+ .send:hover .send-arrow,.rail-settings:hover .gear-icon{transform:none}
+}
 </style>
