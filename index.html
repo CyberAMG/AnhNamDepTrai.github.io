@@ -714,6 +714,7 @@ function getSupabaseClient(){
  return supabaseClientPromise;
 }
 let currentUser=null,currentServer=null,currentChannel=null,messageSubscription=null,profileSyncSubscription=null,authMode='login',servers=[];
+let ownProfile={username:'',avatar_url:'',banner_url:'',banner_color:'#5865f2',theme_mode:'dark',accent_color:'#5865f2',background_color:'#000000',panel_color:'#08090b'};
 const $=id=>document.getElementById(id);
 const memberDock=$('memberDock'),memberPanel=$('memberPanel'),memberResizeEdge=$('memberResizeEdge');
 if(memberDock&&memberPanel&&memberResizeEdge){
@@ -872,7 +873,7 @@ async function confirmJoinServer(code){openModal('Xác nhận tham gia server','
 function openJoinServer(){openModal('Tham gia server','<div class="notice">Bạn có thể nhập mã server hoặc dán đường link mời.</div><div class="field"><label>Mã server</label><input id="inviteInput" maxlength="80" autocomplete="off" placeholder="Nhập mã server"></div><div class="field"><label>Đường link server</label><input id="inviteUrlInput" maxlength="500" autocomplete="off" placeholder="Dán link mời tại đây"></div>','Tiếp tục',async()=>{let code=$('inviteInput').value.trim();const link=$('inviteUrlInput').value.trim();if(link){try{const parsed=new URL(link);code=parsed.searchParams.get('invite')||''}catch{throw Error('Đường link không hợp lệ.')}}if(!code)throw Error('Hãy nhập mã server hoặc đường link hợp lệ.');$('modalRoot').innerHTML='';await confirmJoinServer(code)});setTimeout(()=>$('inviteInput')?.focus(),50)}
 
 
-let ownProfile={username:'',avatar_url:'',banner_url:'',banner_color:'#5865f2',theme_mode:'dark',accent_color:'#5865f2',background_color:'#000000',panel_color:'#08090b'};
+
 function safeColor(value,fallback){return /^#[0-9a-fA-F]{6}$/.test(value||'')?value:fallback}
 function paintOwnProfile(){
  const name=ownProfile.username||currentUser?.email?.split('@')[0]||'Bạn';
