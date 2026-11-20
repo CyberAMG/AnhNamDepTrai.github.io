@@ -491,31 +491,39 @@ body{background:#000}
   filter:none!important;transform:translateZ(0)!important;
 }
 
-/* Keep media on the highest layer inside its own card; never cover customization */
+/* Avatar is the topmost visible item; settings remain in normal flow below */
 .modal:has(.profile-settings-layout) .profile-settings-layout{
-  display:grid!important;gap:22px!important;
-  isolation:isolate!important;position:relative!important;z-index:0!important;
-  overflow-x:hidden!important;overflow-y:auto!important;
+  display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+  gap:24px!important;position:relative!important;isolation:isolate!important;
+  z-index:0!important;overflow-x:hidden!important;overflow-y:auto!important;
 }
 .modal:has(.profile-settings-layout) .profile-settings-preview{
-  position:relative!important;z-index:0!important;
-  isolation:isolate!important;overflow:visible!important;
+  grid-row:1!important;position:relative!important;
+  z-index:2147483646!important;isolation:isolate!important;
+  overflow:visible!important;margin:0!important;
 }
 .modal:has(.profile-settings-layout) .profile-settings-section{
-  position:relative!important;z-index:1!important;
-  isolation:isolate!important;margin-top:2px!important;
-  clear:both!important;transform:none!important;
+  position:relative!important;z-index:0!important;isolation:auto!important;
+  display:block!important;clear:both!important;
+  margin:0!important;transform:none!important;
 }
 .modal:has(.profile-settings-layout) .profile-settings-section:has(#themeModeInput){
-  margin-top:4px!important;padding-top:20px!important;
+  margin-top:0!important;padding-top:18px!important;
 }
-.modal:has(.profile-settings-layout) .profile-cover-preview,
-.modal:has(.profile-settings-layout) .profile-preview-row,
+.modal:has(.profile-settings-layout) .profile-cover-preview{
+  position:relative!important;z-index:1!important;
+}
+.modal:has(.profile-settings-layout) .profile-preview-row{
+  position:relative!important;z-index:2!important;
+}
 .modal:has(.profile-settings-layout) .profile-edit-avatar,
-.modal:has(.profile-settings-layout) .avatar-action,
+.modal:has(.profile-settings-layout) .avatar-action{
+  position:relative!important;z-index:2147483647!important;
+  isolation:isolate!important;
+}
 .modal:has(.profile-settings-layout) .profile-edit-avatar img,
 .modal:has(.profile-settings-layout) .avatar-action img{
-  z-index:2147483647!important;
+  position:relative!important;z-index:2147483647!important;
 }
 </style>
 </head>
