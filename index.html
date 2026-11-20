@@ -525,6 +525,7 @@ body{background:#000}
 
 /* Chat avatar click: dedicated member profile layout */
 .chat-member-profile-modal{
+  position:relative!important;
   width:min(520px,94vw)!important;
   padding:0!important;
   overflow:hidden!important;
@@ -552,19 +553,22 @@ body{background:#000}
   text-align:center!important;
   width:100%!important;
   box-sizing:border-box!important;
-  padding:0 22px 24px!important;
+  padding:58px 22px 24px!important;
   margin:0!important;
   background:transparent!important;
 }
 .chat-member-profile-modal .profile-page-avatar{
-  position:relative!important;
-  z-index:2!important;
+  position:absolute!important;
+  z-index:5!important;
+  top:134px!important;
+  left:50%!important;
+  transform:translateX(-50%)!important;
   display:grid!important;
   place-items:center!important;
   flex:none!important;
   width:92px!important;
   height:92px!important;
-  margin:-46px 0 0!important;
+  margin:0!important;
   padding:0!important;
   border:0!important;
   outline:0!important;
