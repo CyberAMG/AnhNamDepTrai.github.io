@@ -600,6 +600,60 @@ body{background:#000}
   margin:18px 0 0!important;
 }
 
+
+/* Final chat workspace layer: the channel header must not reserve layout space */
+.main{
+ position:relative!important;
+ flex:1 1 auto!important;
+ min-width:0!important;
+ min-height:0!important;
+ margin:10px 0 10px 10px!important;
+ border:1px solid rgba(255,255,255,.045)!important;
+ border-radius:18px!important;
+ overflow:hidden!important;
+ box-shadow:none!important;
+ isolation:isolate;
+}
+.main>.topbar{
+ position:absolute!important;
+ top:10px!important;
+ right:12px!important;
+ z-index:8!important;
+ display:flex!important;
+ width:auto!important;
+ height:36px!important;
+ min-height:36px!important;
+ padding:0!important;
+ margin:0!important;
+ border:0!important;
+ border-radius:0!important;
+ background:transparent!important;
+ box-shadow:none!important;
+ pointer-events:none!important;
+}
+.main>.topbar>#channelTitle{display:none!important}
+.main>.topbar .top-actions{
+ display:flex!important;
+ align-items:center!important;
+ gap:8px!important;
+ margin:0!important;
+ pointer-events:auto!important;
+}
+.main>.chat-scroll{
+ position:relative!important;
+ z-index:1!important;
+ flex:1 1 auto!important;
+ min-height:0!important;
+}
+.main>.composer-wrap{
+ position:relative!important;
+ z-index:2!important;
+ padding-bottom:12px!important;
+}
+@media(max-width:620px){
+ .main{margin:7px 0 7px 6px!important;border-radius:16px!important}
+ .main>.topbar{top:8px!important;right:9px!important}
+}
 </style>
 </head>
 <body>
