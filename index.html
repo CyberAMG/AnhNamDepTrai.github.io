@@ -1273,6 +1273,41 @@ $('callBtn').onclick=startCall;
 .modal.profile-settings-modal>.modal-actions #modalSubmit{font-weight:500!important}
 @media(max-width:560px){.modal.profile-settings-modal{padding:10px 12px 7px!important}.modal.profile-settings-modal>.modal-actions{padding:3px 7px 0!important}}
 
+/* iPhone-like account settings frame and clean save footer */
+.modal.profile-settings-modal{
+ border:1px solid var(--line)!important;
+ border-radius:24px!important;
+ overflow:hidden!important;
+}
+.modal.profile-settings-modal>.profile-settings-layout{
+ scrollbar-width:none!important;
+ -ms-overflow-style:none!important;
+}
+.modal.profile-settings-modal>.profile-settings-layout::-webkit-scrollbar,
+.modal.profile-settings-modal::-webkit-scrollbar,
+.modal.profile-settings-modal *::-webkit-scrollbar{
+ width:0!important;height:0!important;display:none!important;
+}
+.modal.profile-settings-modal>.modal-actions{
+ border:0!important;
+ outline:0!important;
+ box-shadow:none!important;
+ background:transparent!important;
+ border-radius:0 0 23px 23px!important;
+}
+.modal.profile-settings-modal>.modal-actions button{
+ border-width:1px!important;
+ border-style:solid!important;
+ border-radius:14px!important;
+}
+.modal.profile-settings-modal>.modal-actions #modalSubmit{
+ border:1px solid color-mix(in srgb,var(--accent) 65%,white 8%)!important;
+}
+.modal.profile-settings-modal .profile-settings-section,
+.modal.profile-settings-modal .profile-settings-preview{
+ border-radius:18px!important;
+}
+
 /* Refined send control: clear hit area, accent-driven color, precise arrow motion */
 .composer-wrap{position:relative;z-index:2;isolation:isolate}
 #messageForm{position:relative;z-index:2}
