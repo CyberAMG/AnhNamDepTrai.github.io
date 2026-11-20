@@ -586,6 +586,77 @@ body{background:#000}
   .modal:has(.profile-settings-layout) .profile-settings-section:has(#themeModeInput){padding:17px!important}
 }
 
+
+/* Stable vertical flow at normal browser zoom (100%) */
+.modal:has(.profile-settings-layout){
+  display:flex!important;
+  flex-direction:column!important;
+  width:min(760px,94vw)!important;
+  height:92vh!important;
+  max-height:92vh!important;
+  min-height:0!important;
+  overflow:hidden!important;
+  box-sizing:border-box!important;
+}
+.modal:has(.profile-settings-layout) .profile-settings-layout{
+  display:flex!important;
+  flex:1 1 auto!important;
+  flex-direction:column!important;
+  align-items:stretch!important;
+  justify-content:flex-start!important;
+  gap:28px!important;
+  min-height:0!important;
+  max-height:none!important;
+  height:auto!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  padding:12px 10px 30px!important;
+  margin:0!important;
+  position:relative!important;
+  isolation:auto!important;
+  transform:none!important;
+}
+.modal:has(.profile-settings-layout) .profile-settings-preview{
+  order:1!important;
+  display:block!important;
+  position:relative!important;
+  inset:auto!important;
+  flex:0 0 auto!important;
+  width:100%!important;
+  height:auto!important;
+  min-height:0!important;
+  margin:0!important;
+  transform:none!important;
+  z-index:1!important;
+  overflow:hidden!important;
+}
+.modal:has(.profile-settings-layout) .profile-settings-section:has(#themeModeInput){
+  order:2!important;
+  display:block!important;
+  position:relative!important;
+  inset:auto!important;
+  flex:0 0 auto!important;
+  width:100%!important;
+  min-height:220px!important;
+  height:auto!important;
+  margin:0!important;
+  transform:none!important;
+  z-index:0!important;
+  clear:both!important;
+  border:2px solid var(--line)!important;
+  border-radius:20px!important;
+  padding:22px!important;
+}
+.modal:has(.profile-settings-layout) .profile-edit-avatar,
+.modal:has(.profile-settings-layout) .avatar-action,
+.modal:has(.profile-settings-layout) .avatar-action img{
+  z-index:2147483647!important;
+}
+@media(max-width:560px){
+  .modal:has(.profile-settings-layout){width:96vw!important;height:92vh!important;max-height:92vh!important}
+  .modal:has(.profile-settings-layout) .profile-settings-layout{gap:24px!important;padding:10px 4px 24px!important}
+}
+
 </style>
 </head>
 <body>
