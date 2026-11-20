@@ -1252,6 +1252,22 @@ $('callBtn').onclick=startCall;
  #messageForm>.send:hover .send-arrow{transform:none}
 }
 
+/* Minimal chat header: remove channel name strip while retaining call/invite actions */
+.main>.topbar{
+ height:44px!important;min-height:44px!important;
+ padding:0 16px!important;
+ background:transparent!important;
+ border:0!important;
+ box-shadow:none!important;
+}
+.main>.topbar>#channelTitle{display:none!important}
+.main>.topbar .top-actions{margin-left:auto}
+.main{
+ border:1px solid rgba(255,255,255,.035)!important;
+ border-radius:18px!important;
+ box-shadow:none!important;
+}
+.main>.topbar{border-radius:18px 18px 0 0}
 /* Rounded chat workspace + iPhone-like draggable member drawer */
 .main{
  margin:10px 0 10px 10px!important;border:1px solid rgba(255,255,255,.055);
