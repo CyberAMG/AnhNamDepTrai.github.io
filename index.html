@@ -1534,8 +1534,12 @@ body{background:var(--panel)!important}
  padding:0 2px!important;
  margin:0!important;
  gap:12px!important;
+ align-content:start!important;
  overflow-x:hidden!important;
- overflow-y:auto!important;
+ overflow-y:scroll!important;
+ overscroll-behavior-y:contain!important;
+ touch-action:pan-y!important;
+ -webkit-overflow-scrolling:touch!important;
 }
 #modalRoot .modal:has(.profile-settings-layout)>.status:empty,
 #modalRoot .modal:has(.profile-settings-layout)>.modal-actions{display:none!important}
