@@ -266,7 +266,21 @@ body{background:#000}
 /* Keep the profile identity preview visible in main settings */
 .modal:has(.profile-settings-layout) .profile-settings-preview{
  display:block!important;visibility:visible!important;opacity:1!important;
- flex:0 0 auto!important;min-height:205px!important;overflow:hidden!important;
+ flex:0 0 auto!important;min-height:0!important;height:auto!important;
+ overflow:visible!important;padding-bottom:0!important;
+}
+.modal:has(.profile-settings-layout) .profile-cover-preview{
+ border-radius:17px 17px 0 0!important;
+}
+.modal:has(.profile-settings-layout) .profile-preview-bio:not([hidden]){
+ display:block!important;position:relative!important;
+ margin:12px 20px 18px!important;padding:0!important;
+ min-height:0!important;height:auto!important;max-height:none!important;
+ overflow:visible!important;white-space:pre-wrap!important;
+ overflow-wrap:anywhere!important;line-height:1.55!important;
+}
+.modal:has(.profile-settings-layout) .profile-preview-bio[hidden]{
+ display:none!important;margin:0!important;padding:0!important;
 }
 .modal:has(.profile-settings-layout) .profile-cover-preview{
  display:block!important;visibility:visible!important;opacity:1!important;
