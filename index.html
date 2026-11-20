@@ -21,7 +21,7 @@ body{background:#000}
 .auth-card{background:#090a0d;border-color:#1b1d24;box-shadow:0 24px 80px #000}
 .field label{color:#b8bbc5}
 .field input{background:#030405;border-color:#242630}
-.server-rail{background:#000}
+.server-rail{background:#000}.rail-spacer{flex:1;min-height:10px}.rail-settings{margin-top:auto;background:#15171d;color:#bfc3d0;border:1px solid #242630}.rail-settings:hover{background:#252a3a;color:#fff}.avatar{overflow:hidden}.avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}.profile-edit-head{display:flex;align-items:center;gap:14px;margin:0 0 18px}.profile-edit-avatar{width:72px;height:72px;border-radius:50%;overflow:hidden;display:grid;place-items:center;background:linear-gradient(145deg,#8067ed,#3b8dbb 55%,#32b99a);font-size:27px;font-weight:800;color:#fff;flex-shrink:0}.profile-edit-avatar img{width:100%;height:100%;object-fit:cover}.profile-edit-head small{color:var(--muted);line-height:1.5}.profile-file{width:100%;background:#111318;border:1px solid #353743;border-radius:11px;padding:10px;color:#cdd0da}.profile-hint{font-size:11px;color:var(--muted);margin-top:6px}
 .server-icon{background:#101115}
 .side,.member-panel{background:#08090b}
 .side{border-right-color:#17191e}
@@ -114,7 +114,7 @@ body{background:#000}
  </div>
 </section>
 <section id="appView" class="app hidden">
- <nav class="server-rail" id="serverRail"><div class="server-icon active" title="Gaming Hub">G</div><div class="rail-divider"></div><button class="server-icon add-server" id="addServer" title="Tạo server">+</button><button class="server-icon" id="joinServer" title="Tham gia server">↗</button></nav>
+ <nav class="server-rail" id="serverRail"><div class="server-icon active" title="Gaming Hub">G</div><div class="rail-divider"></div><button class="server-icon add-server" id="addServer" title="Tạo server">+</button><button class="server-icon" id="joinServer" title="Tham gia server">↗</button><div class="rail-spacer"></div><button class="server-icon rail-settings" id="userSettings" title="Cài đặt tài khoản" aria-label="Cài đặt tài khoản">⚙</button></nav>
  <aside class="side">
   <div class="side-head"><span id="serverName">Gaming Hub</span><button class="icon-btn" id="serverMenu" title="Cài đặt server">⚙</button></div>
   <div class="side-body"><button class="join-server-link" id="joinServerSide" type="button">＋　Tham gia server</button><button class="join-server-link" id="serverCodeSide" type="button" hidden>⌁　Code server</button><div class="section-row"><div class="section-label">KÊNH</div><button class="mini-add" id="addChannelBtn" title="Tạo kênh">＋</button></div><div id="channelList"></div><div class="section-row"><div class="section-label">THÀNH VIÊN</div><button class="mini-add" id="addMemberBtn" title="Mời thành viên">＋</button></div><div id="sideMembers"></div></div>
