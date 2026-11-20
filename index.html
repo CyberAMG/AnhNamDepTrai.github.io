@@ -662,17 +662,34 @@ let currentUser=null,currentServer=null,currentChannel=null,messageSubscription=
 const $=id=>document.getElementById(id);
 const memberDock=$('memberDock'),memberPanel=$('memberPanel'),memberResizeEdge=$('memberResizeEdge');
 if(memberDock&&memberPanel&&memberResizeEdge){
- let memberDragging=false,memberStartX=0,memberStartWidth=0,memberCurrentWidth=224;
+ let memberDragging=false,memberStartX=0,memberStartWidth=0,memberCurrentWidth=224,memberTargetWidth=224,memberRaf=0;
  const memberMin=176,memberMax=320,memberClosed=12;
- const setMemberWidth=value=>{
-  memberCurrentWidth=Math.max(memberClosed,Math.min(memberMax,value));
+ const clampMemberWidth=value=>Math.max(memberClosed,Math.min(memberMax,value));
+ const paintMemberWidth=value=>{
+  memberCurrentWidth=clampMemberWidth(value);
   memberPanel.style.width=memberCurrentWidth+'px';
   memberDock.classList.toggle('is-collapsed',memberCurrentWidth<=memberClosed);
+ };
+ const animateMemberWidth=()=>{
+  const difference=memberTargetWidth-memberCurrentWidth;
+  if(Math.abs(difference)<.35){paintMemberWidth(memberTargetWidth);memberRaf=0;return}
+  paintMemberWidth(memberCurrentWidth+difference*.24);
+  memberRaf=requestAnimationFrame(animateMemberWidth);
+ };
+ const moveMemberToward=value=>{
+  memberTargetWidth=clampMemberWidth(value);
+  if(!memberRaf)memberRaf=requestAnimationFrame(animateMemberWidth);
+ };
+ const setMemberWidth=value=>{
+  memberTargetWidth=clampMemberWidth(value);
+  if(memberRaf){cancelAnimationFrame(memberRaf);memberRaf=0}
+  paintMemberWidth(memberTargetWidth);
  };
  setMemberWidth(memberClosed);
  memberResizeEdge.addEventListener('pointerdown',event=>{
   if(event.button!==0&&event.pointerType==='mouse')return;
   memberDragging=true;memberStartX=event.clientX;memberStartWidth=memberCurrentWidth;
+  memberTargetWidth=memberCurrentWidth;
   memberResizeEdge.setPointerCapture(event.pointerId);
   memberDock.classList.add('is-dragging');
   document.body.style.userSelect='none';
@@ -680,14 +697,16 @@ if(memberDock&&memberPanel&&memberResizeEdge){
  });
  memberResizeEdge.addEventListener('pointermove',event=>{
   if(!memberDragging)return;
-  setMemberWidth(memberStartWidth+memberStartX-event.clientX);
+  const fingerDelta=memberStartX-event.clientX;
+  moveMemberToward(memberStartWidth+fingerDelta*.78);
  });
  const finishMemberDrag=()=>{
   if(!memberDragging)return;
   memberDragging=false;memberDock.classList.remove('is-dragging');document.body.style.userSelect='';
+  const releasedWidth=memberTargetWidth;
   const threshold=Math.max(memberMin,Math.min(memberMax,window.innerWidth*.22));
-  if(memberCurrentWidth<threshold)setMemberWidth(memberClosed);
-  else setMemberWidth(Math.max(memberMin,memberCurrentWidth));
+  if(releasedWidth<threshold)setMemberWidth(memberClosed);
+  else setMemberWidth(Math.max(memberMin,releasedWidth));
  };
  memberResizeEdge.addEventListener('pointerup',finishMemberDrag);
  memberResizeEdge.addEventListener('pointercancel',finishMemberDrag);
