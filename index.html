@@ -288,15 +288,27 @@ body{background:#000}
 .modal:has(.profile-settings-layout) .profile-preview-bio{display:block!important;visibility:visible!important;opacity:1!important}
 
 
-/* Keep original compact color palette; prevent glass button layer hiding swatch colors */
-.modal:has(.profile-settings-layout) .color-swatches button{
- background:var(--swatch)!important;background-image:none!important;
- width:23px!important;height:23px!important;min-width:23px!important;
- padding:0!important;border-radius:50%!important;
- border:2px solid rgba(255,255,255,.42)!important;
- box-shadow:0 2px 8px #0004!important;
+/* Restore the original compact color controls and keep swatches above glass button styling */
+.modal:has(.profile-settings-layout) .profile-color-row{
+ display:flex!important;align-items:center!important;gap:10px!important;
+ margin:10px 0!important;padding:0!important;border:0!important;
+ border-radius:0!important;background:transparent!important;flex-wrap:wrap!important;
 }
-.modal:has(.profile-settings-layout) .color-swatches button:hover{transform:scale(1.18)!important}
+.modal:has(.profile-settings-layout) .profile-color-row label{flex:0 0 88px!important;min-width:88px!important}
+.modal:has(.profile-settings-layout) .profile-color-row input[type=color]{flex:0 0 40px!important;width:40px!important;height:32px!important;padding:2px!important}
+.modal:has(.profile-settings-layout) .color-swatches{display:flex!important;gap:7px!important;align-items:center!important;flex-wrap:wrap!important}
+.modal:has(.profile-settings-layout) .color-swatches button{
+ appearance:none!important;-webkit-appearance:none!important;
+ background:var(--swatch)!important;background-color:var(--swatch)!important;background-image:none!important;
+ width:23px!important;height:23px!important;min-width:23px!important;min-height:23px!important;
+ padding:0!important;border-radius:50%!important;flex:0 0 23px!important;
+ border:2px solid rgba(255,255,255,.42)!important;
+ box-shadow:0 2px 8px #0004!important;overflow:hidden!important;
+}
+.modal:has(.profile-settings-layout) .color-swatches button::before,
+.modal:has(.profile-settings-layout) .color-swatches button::after{display:none!important;content:none!important}
+.modal:has(.profile-settings-layout) .color-swatches button:hover{transform:scale(1.12)!important;background:var(--swatch)!important}
+.modal:has(.profile-settings-layout) .color-swatches button:active{transform:scale(.94)!important;background:var(--swatch)!important}
 </style>
 </head>
 <body>
@@ -483,8 +495,22 @@ function openUserSettings(){
  $('profileNameInput').addEventListener('input',()=>{$('profilePreviewName').textContent=$('profileNameInput').value||'Tên của bạn'});
  $('profileBioInput').addEventListener('input',()=>{$('profilePreviewBio').textContent=$('profileBioInput').value||'Chưa có mô tả.'});
  root.querySelectorAll('.color-swatches').forEach(group=>group.querySelectorAll('button').forEach(btn=>btn.onclick=()=>{const input=$(group.dataset.target);input.value=btn.dataset.color;input.dispatchEvent(new Event('input',{bubbles:true}))}));
- ['accentColorInput','backgroundColorInput','panelColorInput'].forEach(id=>$(id).addEventListener('input',()=>{const preview={...ownProfile,theme_mode:$('themeModeInput').value,accent_color:$('accentColorInput').value,background_color:$('backgroundColorInput').value,panel_color:$('panelColorInput').value};applyUserTheme(preview)}));
- $('themeModeInput').addEventListener('change',()=>applyUserTheme({...ownProfile,theme_mode:$('themeModeInput').value,accent_color:$('accentColorInput').value,background_color:$('backgroundColorInput').value,panel_color:$('panelColorInput').value}));
+ function previewProfileTheme(){
+  const mode=$('themeModeInput').value,light=mode==='light',accent=safeColor($('accentColorInput').value,'#5865f2');
+  const bg=light?'#f3f4f8':safeColor($('backgroundColorInput').value,'#000000');
+  const panel=light?'#ffffff':safeColor($('panelColorInput').value,'#08090b');
+  const panel2=light?'#e9ebf2':mixColor(panel,'#ffffff',.055);
+  const line=light?'#d9dce5':mixColor(panel,'#ffffff',.12);
+  const modal=root.querySelector('.modal:has(.profile-settings-layout)');if(!modal)return;
+  modal.style.setProperty('--accent',accent);modal.style.setProperty('--accent2',accent);
+  modal.style.setProperty('--bg',bg);modal.style.setProperty('--panel',panel);
+  modal.style.setProperty('--panel2',panel2);modal.style.setProperty('--line',line);
+  modal.style.setProperty('--text',light?'#171923':'#f1f2f5');
+  modal.style.setProperty('--muted',light?'#626777':'#858995');
+  modal.style.colorScheme=light?'light':'dark';
+ }
+ ['accentColorInput','backgroundColorInput','panelColorInput'].forEach(id=>$(id).addEventListener('input',previewProfileTheme));
+ $('themeModeInput').addEventListener('change',previewProfileTheme);
 }
 async function openMemberProfile(userId){if(!userId)return;if(userId===currentUser?.id)return openMyProfile();const root=$('modalRoot');root.innerHTML='<div class="modal-backdrop"><div class="modal profile-page-modal glass-card"><div class="profile-page-cover"></div><div class="profile-page-content"><div class="profile-page-avatar">…</div><h2>Đang tải hồ sơ...</h2></div></div></div>';try{const {data,error}=await db.from('profiles').select('id,username,avatar_url,bio,banner_url,banner_color').eq('id',userId).maybeSingle();if(error)throw error;if(!data)throw Error('Không tìm thấy hồ sơ thành viên.');const p=data,n=p.username||'Thành viên',cover=p.banner_url?'background-image:url(&quot;'+esc(p.banner_url)+'&quot;);background-size:cover;background-position:center;background-color:'+safeColor(p.banner_color,'#5865f2'):'background:'+safeColor(p.banner_color,'#5865f2');root.innerHTML='<div class="modal-backdrop"><div class="modal profile-page-modal glass-card"><div class="profile-page-cover" style="'+cover+'"></div><div class="profile-page-content"><div class="profile-page-avatar">'+(p.avatar_url?'<img src="'+esc(p.avatar_url)+'" alt="">':esc(initials(n)))+'</div><h2>'+esc(n)+'</h2><p class="profile-page-bio">'+esc(p.bio||'Chưa có mô tả.')+'</p><div class="profile-page-actions"><button class="ghost" id="profilePageClose">Đóng</button></div></div></div></div>';$('profilePageClose').onclick=()=>root.innerHTML='';root.querySelector('.modal-backdrop').onclick=e=>{if(e.target.classList.contains('modal-backdrop'))root.innerHTML=''}}catch(e){root.innerHTML='<div class="modal-backdrop"><div class="modal"><h2>Không thể mở hồ sơ</h2><p>'+esc(e.message||'Đã xảy ra lỗi.')+'</p><div class="modal-actions"><button class="primary" id="profilePageClose">Đóng</button></div></div></div>';$('profilePageClose').onclick=()=>root.innerHTML=''}}
 function cropImageBeforeUpload(file,kind){return new Promise((resolve,reject)=>{const src=URL.createObjectURL(file),img=new Image();img.onload=()=>{const avatar=kind==='avatar',ow=avatar?640:1440,oh=avatar?640:480,base=Math.max(ow/img.naturalWidth,oh/img.naturalHeight);let zoom=1,x=0,y=0;const root=$('modalRoot');root.insertAdjacentHTML('beforeend','<div class="image-crop-layer"><div class="image-crop-card glass-card"><div class="crop-head"><strong>'+(avatar?'Căn chỉnh ảnh đại diện':'Căn chỉnh ảnh bìa')+'</strong><button type="button" id="cropCancel">×</button></div><div class="crop-preview '+(avatar?'circle':'landscape')+'" id="cropViewport"><img id="cropSource" src="'+src+'"></div><div class="crop-controls"><label>Phóng to <input id="cropZoom" type="range" min="1" max="3" step=".01" value="1"></label><label>Ngang <input id="cropX" type="range" min="-1" max="1" step=".01" value="0"></label><label>Dọc <input id="cropY" type="range" min="-1" max="1" step=".01" value="0"></label></div><div class="crop-foot"><button type="button" class="ghost" id="cropCancel2">Hủy</button><button type="button" class="primary" id="cropApply">Dùng ảnh này</button></div></div></div>');const layer=root.querySelector('.image-crop-layer'),view=$('cropViewport'),image=$('cropSource'),zi=$('cropZoom'),xi=$('cropX'),yi=$('cropY');view.style.aspectRatio=ow+'/'+oh;function preview(){const scale=base*zoom,w=img.naturalWidth*scale,h=img.naturalHeight*scale,display=view.clientWidth/ow;image.style.width=w*display+'px';image.style.height=h*display+'px';image.style.maxWidth='none';image.style.position='absolute';image.style.left='50%';image.style.top='50%';image.style.transform='translate(calc(-50% + '+(x*Math.max(0,w-ow)*display/2)+'px),calc(-50% + '+(y*Math.max(0,h-oh)*display/2)+'px))'}zi.oninput=()=>{zoom=+zi.value;preview()};xi.oninput=()=>{x=+xi.value;preview()};yi.oninput=()=>{y=+yi.value;preview()};preview();let closed=false;function close(){if(closed)return;closed=true;URL.revokeObjectURL(src);layer.remove()}$('cropCancel').onclick=$('cropCancel2').onclick=()=>{close();resolve(null)};layer.onclick=e=>{if(e.target===layer){close();resolve(null)}};$('cropApply').onclick=()=>{const canvas=document.createElement('canvas');canvas.width=ow;canvas.height=oh;const ctx=canvas.getContext('2d'),scale=base*zoom,w=img.naturalWidth*scale,h=img.naturalHeight*scale,dx=(ow-w)/2+x*Math.max(0,w-ow)/2,dy=(oh-h)/2+y*Math.max(0,h-oh)/2;if(avatar){ctx.beginPath();ctx.arc(ow/2,oh/2,ow/2,0,Math.PI*2);ctx.clip()}ctx.drawImage(img,dx,dy,w,h);canvas.toBlob(blob=>{if(!blob){close();reject(Error('Không thể xử lý ảnh.'));return}const out=new File([blob],kind+'-'+Date.now()+'.jpg',{type:'image/jpeg'});close();resolve(out)},'image/jpeg',.92)}};img.onerror=()=>{URL.revokeObjectURL(src);reject(Error('Không thể đọc ảnh.'))};img.src=src})}
