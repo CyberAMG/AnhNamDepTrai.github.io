@@ -262,6 +262,31 @@ body{background:#000}
 
 .modal:has(.profile-settings-layout) .avatar-action{width:76px;height:76px;min-width:76px;padding:0;border-radius:50%;flex:0 0 76px}
 .modal:has(.profile-settings-layout) .cover-tools{position:absolute;right:12px;top:12px;width:38px;height:38px;padding:0;border-radius:50%;display:grid;place-items:center}
+
+/* Keep the profile identity preview visible in main settings */
+.modal:has(.profile-settings-layout) .profile-settings-preview{
+ display:block!important;visibility:visible!important;opacity:1!important;
+ flex:0 0 auto!important;min-height:205px!important;overflow:hidden!important;
+}
+.modal:has(.profile-settings-layout) .profile-cover-preview{
+ display:block!important;visibility:visible!important;opacity:1!important;
+ height:136px!important;min-height:136px!important;position:relative!important;
+}
+.modal:has(.profile-settings-layout) .profile-preview-row{
+ display:flex!important;visibility:visible!important;opacity:1!important;
+ min-height:82px!important;align-items:center!important;
+}
+.modal:has(.profile-settings-layout) .profile-edit-avatar{
+ display:grid!important;visibility:visible!important;opacity:1!important;
+ width:82px!important;height:82px!important;min-width:82px!important;
+ min-height:82px!important;flex:0 0 82px!important;overflow:hidden!important;
+}
+.modal:has(.profile-settings-layout) .profile-edit-avatar img{
+ display:block!important;width:100%!important;height:100%!important;object-fit:cover!important;
+}
+.modal:has(.profile-settings-layout) .profile-preview-name,
+.modal:has(.profile-settings-layout) .profile-preview-bio{display:block!important;visibility:visible!important;opacity:1!important}
+
 </style>
 </head>
 <body>
