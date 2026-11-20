@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#000000">
 <title>Gaming Hub V2</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.jsdelivr.net/npm/livekit-client@2.23.0/dist/livekit-client.umd.min.js"></script>
+<script async src="https://cdn.jsdelivr.net/npm/livekit-client@2.23.0/dist/livekit-client.umd.min.js"></script>
 <style>
 :root{color-scheme:dark;--bg:#111214;--panel:#191a1f;--panel2:#202127;--line:#2b2d35;--muted:#9296a3;--text:#f4f5f8;--accent:#5865f2;--accent2:#4752c4;--green:#3ba675;--danger:#ed626c}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px Inter,system-ui,-apple-system,Segoe UI,sans-serif;height:100vh;overflow:hidden}button,input{font:inherit}button{cursor:pointer;border:0;color:inherit}.hidden{display:none!important}
@@ -496,7 +496,30 @@ body{background:#000}
 <script>
 const SUPABASE_URL='https://zctrdfocxmcwkzqkrtsd.supabase.co';
 const SUPABASE_KEY='sb_publishable_sCJwclbCjkuQzVEvZL3XEg_dlsCjzw0';
-const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+let db=null,supabaseClientPromise=null;
+function getSupabaseClient(){
+ if(db)return Promise.resolve(db);
+ if(window.supabase&&typeof window.supabase.createClient==='function'){
+  db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+  return Promise.resolve(db);
+ }
+ if(!supabaseClientPromise){
+  supabaseClientPromise=new Promise((resolve,reject)=>{
+   const fallback=document.createElement('script');
+   fallback.src='https://unpkg.com/@supabase/supabase-js@2';
+   fallback.onload=()=>{
+    try{
+     if(!window.supabase||typeof window.supabase.createClient!=='function')throw new Error('Thư viện Supabase không khởi tạo được.');
+     db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+     resolve(db);
+    }catch(error){reject(error)}
+   };
+   fallback.onerror=()=>reject(new Error('Không tải được thư viện kết nối. Hãy kiểm tra Internet hoặc tắt tiện ích chặn CDN rồi tải lại trang.'));
+   document.head.appendChild(fallback);
+  }).catch(error=>{supabaseClientPromise=null;throw error});
+ }
+ return supabaseClientPromise;
+}
 let currentUser=null,currentServer=null,currentChannel=null,messageSubscription=null,authMode='login',servers=[];
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -511,7 +534,31 @@ function openModal(title,fields,submitText,onSubmit){
  $('modalSubmit').onclick=async()=>{const b=$('modalSubmit');b.disabled=true;try{await onSubmit()}catch(e){setStatus('modalStatus',e.message||'Có lỗi xảy ra')}finally{b.disabled=false}};
 }
 $('toggleAuth').onclick=()=>{authMode=authMode==='login'?'signup':'login';$('authTitle').textContent=authMode==='login'?'Đăng nhập':'Tạo tài khoản';$('authSubtitle').textContent=authMode==='login'?'Chào mừng bạn quay trở lại.':'Đăng ký bằng email và mật khẩu.';$('authSubmit').textContent=authMode==='login'?'Đăng nhập':'Đăng ký';$('toggleAuth').textContent=authMode==='login'?'Tạo tài khoản mới':'Đã có tài khoản? Đăng nhập';setStatus('authStatus','')};
-$('authForm').onsubmit=async e=>{e.preventDefault();const email=$('email').value.trim(),password=$('password').value;const b=$('authSubmit');b.disabled=true;setStatus('authStatus','Đang xử lý...');try{if(authMode==='signup'){const {data,error}=await db.auth.signUp({email,password,options:{data:{username:email.split('@')[0]},emailRedirectTo:'https://cyberamg.github.io/AnhNamDepTrai.github.io/'}});if(error)throw error;if(data.session){currentUser=data.user;await enterApp()}else setStatus('authStatus','Đăng ký thành công! Hãy kiểm tra email để xác minh, sau đó đăng nhập.')}else{const {data,error}=await db.auth.signInWithPassword({email,password});if(error)throw error;currentUser=data.user;await enterApp()}}catch(err){setStatus('authStatus',err.message)}finally{b.disabled=false}};
+$('authForm').onsubmit=async e=>{
+ e.preventDefault();
+ const email=$('email').value.trim(),password=$('password').value;
+ const b=$('authSubmit');b.disabled=true;setStatus('authStatus','Đang kết nối...');
+ try{
+  const client=await getSupabaseClient();
+  if(!email||!password)throw new Error('Hãy nhập email và mật khẩu.');
+  if(authMode==='signup'){
+   const {data,error}=await client.auth.signUp({email,password,options:{data:{username:email.split('@')[0]},emailRedirectTo:'https://cyberamg.github.io/AnhNamDepTrai.github.io/'}});
+   if(error)throw error;
+   if(data.session&&data.user){currentUser=data.user;await enterApp()}
+   else setStatus('authStatus','Đăng ký thành công! Hãy kiểm tra email để xác minh, sau đó đăng nhập.');
+  }else{
+   const {data,error}=await client.auth.signInWithPassword({email,password});
+   if(error)throw error;
+   if(!data.user)throw new Error('Xác thực chưa trả về tài khoản. Hãy thử lại.');
+   currentUser=data.user;
+   await enterApp();
+  }
+ }catch(err){
+  showAuth();
+  console.error('Gaming Hub authentication error:',err);
+  setStatus('authStatus',err&&err.message?err.message:'Không thể đăng nhập. Hãy thử lại.');
+ }finally{b.disabled=false}
+};
 $('userSettings').onclick=openUserSettings;
 $('myAvatar').title='Xem trang cá nhân';$('myAvatar').style.cursor='pointer';$('myAvatar').onclick=openMyProfile;$('myName').title='Xem trang cá nhân';$('myName').style.cursor='pointer';$('myName').onclick=openMyProfile;
 $('signOut').onclick=async()=>{if(messageSubscription)await db.removeChannel(messageSubscription);await db.auth.signOut();currentUser=null;currentServer=null;currentChannel=null;showAuth()};
@@ -670,7 +717,18 @@ async function openMemberProfile(userId){if(!userId)return;if(userId===currentUs
 function cropImageBeforeUpload(file,kind){return new Promise((resolve,reject)=>{const src=URL.createObjectURL(file),img=new Image();img.onload=()=>{const avatar=kind==='avatar',ow=avatar?640:1440,oh=avatar?640:480,base=Math.max(ow/img.naturalWidth,oh/img.naturalHeight);let zoom=1,x=0,y=0;const root=$('modalRoot');root.insertAdjacentHTML('beforeend','<div class="image-crop-layer"><div class="image-crop-card glass-card"><div class="crop-head"><strong>'+(avatar?'Căn chỉnh ảnh đại diện':'Căn chỉnh ảnh bìa')+'</strong><button type="button" id="cropCancel">×</button></div><div class="crop-preview '+(avatar?'circle':'landscape')+'" id="cropViewport"><img id="cropSource" src="'+src+'"></div><div class="crop-controls"><label>Phóng to <input id="cropZoom" type="range" min="1" max="3" step=".01" value="1"></label><label>Ngang <input id="cropX" type="range" min="-1" max="1" step=".01" value="0"></label><label>Dọc <input id="cropY" type="range" min="-1" max="1" step=".01" value="0"></label></div><div class="crop-foot"><button type="button" class="ghost" id="cropCancel2">Hủy</button><button type="button" class="primary" id="cropApply">Dùng ảnh này</button></div></div></div>');const layer=root.querySelector('.image-crop-layer'),view=$('cropViewport'),image=$('cropSource'),zi=$('cropZoom'),xi=$('cropX'),yi=$('cropY');view.style.aspectRatio=ow+'/'+oh;function preview(){const scale=base*zoom,w=img.naturalWidth*scale,h=img.naturalHeight*scale,display=view.clientWidth/ow;image.style.width=w*display+'px';image.style.height=h*display+'px';image.style.maxWidth='none';image.style.position='absolute';image.style.left='50%';image.style.top='50%';image.style.transform='translate(calc(-50% + '+(x*Math.max(0,w-ow)*display/2)+'px),calc(-50% + '+(y*Math.max(0,h-oh)*display/2)+'px))'}zi.oninput=()=>{zoom=+zi.value;preview()};xi.oninput=()=>{x=+xi.value;preview()};yi.oninput=()=>{y=+yi.value;preview()};preview();let closed=false;function close(){if(closed)return;closed=true;URL.revokeObjectURL(src);layer.remove()}$('cropCancel').onclick=$('cropCancel2').onclick=()=>{close();resolve(null)};layer.onclick=e=>{if(e.target===layer){close();resolve(null)}};$('cropApply').onclick=()=>{const canvas=document.createElement('canvas');canvas.width=ow;canvas.height=oh;const ctx=canvas.getContext('2d'),scale=base*zoom,w=img.naturalWidth*scale,h=img.naturalHeight*scale,dx=(ow-w)/2+x*Math.max(0,w-ow)/2,dy=(oh-h)/2+y*Math.max(0,h-oh)/2;if(avatar){ctx.beginPath();ctx.arc(ow/2,oh/2,ow/2,0,Math.PI*2);ctx.clip()}ctx.drawImage(img,dx,dy,w,h);canvas.toBlob(blob=>{if(!blob){close();reject(Error('Không thể xử lý ảnh.'));return}const out=new File([blob],kind+'-'+Date.now()+'.jpg',{type:'image/jpeg'});close();resolve(out)},'image/jpeg',.92)}};img.onerror=()=>{URL.revokeObjectURL(src);reject(Error('Không thể đọc ảnh.'))};img.src=src})}
 function showProfileImage(src,title){if(!src)return setStatus('modalStatus','Chưa có ảnh để xem.');const layer=document.createElement('div');layer.className='image-lightbox';layer.innerHTML='<div class="image-lightbox-card glass-card"><button class="image-lightbox-close" type="button">×</button><div class="image-lightbox-title">'+esc(title)+'</div><img src="'+esc(src)+'" alt="'+esc(title)+'"></div>';document.body.append(layer);layer.querySelector('button').onclick=()=>layer.remove();layer.onclick=e=>{if(e.target===layer)layer.remove()}}
 
-async function enterApp(){showApp();await loadOwnProfile();await loadServers();updateJoinControls();await handleInviteUrl()}
+async function enterApp(){
+ try{
+  await loadOwnProfile();
+  await loadServers();
+  updateJoinControls();
+  await handleInviteUrl();
+  showApp();
+ }catch(error){
+  showAuth();
+  throw new Error('Đăng nhập được nhưng không tải được dữ liệu Gaming Hub: '+(error.message||'Lỗi không xác định.'));
+ }
+}
 async function loadServers(){const {data,error}=await db.from('servers').select('id,name,invite_code,owner_id,created_at').order('created_at');if(error)throw error;servers=data||[];const rail=$('serverRail');rail.querySelectorAll('[data-server]').forEach(n=>n.remove());servers.forEach((s,i)=>{const b=document.createElement('button');b.className='server-icon'+(currentServer?.id===s.id?' active':'');b.dataset.server=s.id;b.title=s.name;b.textContent=initials(s.name);b.onclick=()=>selectServer(s.id);b.addEventListener('contextmenu',e=>showServerContext(e,s));$('addServer').before(b)});if(!currentServer&&servers.length)await selectServer(servers[0].id);updateJoinControls();if(!servers.length){currentServer=null;currentChannel=null;updateJoinControls();$('serverName').textContent='Gaming Hub';$('channelList').innerHTML='';$('messages').innerHTML='<div class="welcome"><div class="big">🎮</div><strong>Chưa có server</strong><p>Tạo server mới hoặc tham gia bằng mã mời.</p></div>'; $('messageInput').disabled=true}}
 async function selectServer(id){currentServer=servers.find(s=>s.id===id);if(!currentServer)return;updateJoinControls();document.querySelectorAll('[data-server]').forEach(b=>b.classList.toggle('active',b.dataset.server===id));$('serverName').textContent=currentServer.name;const {data:channels,error}=await db.from('channels').select('*').eq('server_id',id).order('created_at');if(error)throw error;$('channelList').innerHTML='';(channels||[]).forEach(ch=>{const el=document.createElement('div');el.className='channel';el.dataset.channel=ch.id;el.innerHTML='<span class="hash">'+(ch.type==='voice'?'◉':'#')+'</span><span>'+esc(ch.name)+'</span>'+(ch.type==='voice'?'<span style="margin-left:auto;color:#858995;font-size:10px">THOẠI</span>':'');el.onclick=()=>selectChannel(ch);$('channelList').append(el)});await loadMembers(id);const firstText=(channels||[]).find(ch=>ch.type!=='voice');if(firstText)await selectChannel(firstText);else{currentChannel=null;$('callBtn').classList.add('hidden');$('messages').innerHTML='<div class="empty-note">Server chưa có kênh chat.</div>';$('messageInput').disabled=true}}
 async function loadMembers(serverId){const {data,error}=await db.from('server_members').select('user_id,role').eq('server_id',serverId);if(error)throw error;const ids=(data||[]).map(x=>x.user_id);let profiles=[];if(ids.length){const r=await db.from('profiles').select('id,username,avatar_url,bio,banner_url,banner_color').in('id',ids);if(!r.error)profiles=r.data||[]}const html=(data||[]).map(m=>{const p=profiles.find(x=>x.id===m.user_id);const name=p?.username||'Thành viên';return '<button type="button" class="member member-profile-trigger" data-profile-id="'+esc(m.user_id)+'"><span class="online"></span>'+(p?.avatar_url?'<img class="member-mini-avatar" src="'+esc(p.avatar_url)+'" alt="">':'<span class="member-mini-avatar member-mini-fallback">'+esc(initials(name))+'</span>')+'<span class="member-name">'+esc(name)+'</span></button>'}).join('')||'<div class="member">Chưa có thành viên</div>';$('members').innerHTML=html;$('sideMembers').innerHTML=html;[...document.querySelectorAll('.member-profile-trigger')].forEach(el=>el.onclick=()=>openMemberProfile(el.dataset.profileId))}
@@ -739,8 +797,27 @@ async function startCall(){
 async function leaveCall(){if(livekitRoom){try{await livekitRoom.disconnect()}catch{}livekitRoom=null}livekitCallChannelId=null;callMicOn=true;callCameraOn=false;callScreenOn=false;callConnecting=false;$('callOverlay')?.remove()}
 $('callBtn').onclick=startCall;
 
-db.auth.getSession().then(async({data})=>{if(data.session){currentUser=data.session.user;try{await enterApp()}catch(e){console.error(e);alert('Không tải được Gaming Hub: '+e.message)}}});
-db.auth.onAuthStateChange(async(event,session)=>{if(event==='SIGNED_OUT'){currentUser=null;showAuth()}});
+(async()=>{
+ try{
+  const client=await getSupabaseClient();
+  client.auth.onAuthStateChange((event,session)=>{
+   if(event==='SIGNED_OUT'){
+    currentUser=null;currentServer=null;currentChannel=null;
+    showAuth();
+   }
+  });
+  const {data,error}=await client.auth.getSession();
+  if(error)throw error;
+  if(data.session){
+   currentUser=data.session.user;
+   await enterApp();
+  }
+ }catch(error){
+  console.error('Gaming Hub startup/auth error:',error);
+  showAuth();
+  setStatus('authStatus',error&&error.message?error.message:'Không thể khởi tạo đăng nhập. Hãy tải lại trang.');
+ }
+})();
 </script>
 </body>
 </html>
