@@ -1461,13 +1461,25 @@ body{background:var(--panel)!important}
 
 /* Profile settings: equal corner geometry with a clipped rounded scroll viewport */
 #modalRoot .modal:has(.profile-settings-layout){
+ position:relative!important;
  box-sizing:border-box!important;
- border:1px solid rgba(255,255,255,.055)!important;
+ border:0!important;
  border-radius:24px!important;
  outline:0!important;
  box-shadow:none!important;
  overflow:hidden!important;
  background-clip:padding-box!important;
+}
+#modalRoot .modal:has(.profile-settings-layout)::after{
+ content:""!important;
+ display:block!important;
+ position:absolute!important;
+ inset:0!important;
+ z-index:100!important;
+ pointer-events:none!important;
+ border:1px solid rgba(255,255,255,.055)!important;
+ border-radius:24px!important;
+ box-sizing:border-box!important;
 }
 #modalRoot .modal:has(.profile-settings-layout)>.profile-settings-layout{
  box-sizing:border-box!important;
@@ -1496,6 +1508,5 @@ body{background:var(--panel)!important}
 }
 #modalRoot .modal:has(.profile-settings-layout) .profile-settings-profile-card{border-radius:16px!important}
 #modalRoot .modal:has(.profile-settings-layout)>.status{border:0!important;box-shadow:none!important}
-#modalRoot .modal:has(.profile-settings-layout)::before,
-#modalRoot .modal:has(.profile-settings-layout)::after{content:none!important;display:none!important}
+#modalRoot .modal:has(.profile-settings-layout)::before{content:none!important;display:none!important}
 </style>
