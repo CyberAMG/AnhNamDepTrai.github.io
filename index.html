@@ -263,72 +263,6 @@ body{background:#000}
 .modal:has(.profile-settings-layout) .avatar-action{width:76px;height:76px;min-width:76px;padding:0;border-radius:50%;flex:0 0 76px}
 .modal:has(.profile-settings-layout) .cover-tools{position:absolute;right:12px;top:12px;width:38px;height:38px;padding:0;border-radius:50%;display:grid;place-items:center}
 
-/* Keep the profile identity preview visible in main settings */
-.modal:has(.profile-settings-layout) .profile-settings-preview{
- display:block!important;visibility:visible!important;opacity:1!important;
- flex:0 0 auto!important;min-height:0!important;height:auto!important;
- overflow:visible!important;padding-bottom:0!important;
-}
-.modal:has(.profile-settings-layout) .profile-cover-preview{
- border-radius:17px 17px 0 0!important;
-}
-.modal:has(.profile-settings-layout) .profile-preview-bio:not([hidden]){
- display:block!important;position:relative!important;
- margin:12px 20px 18px!important;padding:0!important;
- min-height:0!important;height:auto!important;max-height:none!important;
- overflow:visible!important;white-space:pre-wrap!important;
- overflow-wrap:anywhere!important;line-height:1.55!important;
-}
-.modal:has(.profile-settings-layout) .profile-preview-bio[hidden]{
- display:none!important;margin:0!important;padding:0!important;
-}
-/* Keep profile description visible directly beneath the avatar row */
-.modal:has(.profile-settings-layout) .profile-settings-preview{
- height:auto!important;min-height:0!important;overflow:visible!important;
-}
-.modal:has(.profile-settings-layout) .profile-preview-bio:not([hidden]){
- display:block!important;visibility:visible!important;opacity:1!important;
- position:static!important;float:none!important;clear:both!important;
- width:auto!important;max-width:none!important;
- margin:14px 20px 20px!important;padding:0 0 2px!important;
- height:auto!important;min-height:0!important;max-height:none!important;
- overflow:visible!important;clip:auto!important;
- color:var(--muted)!important;font-size:13px!important;
- line-height:1.65!important;white-space:pre-wrap!important;
- overflow-wrap:anywhere!important;
-}
-.modal:has(.profile-settings-layout) .profile-preview-bio[hidden]{
- display:none!important;visibility:hidden!important;margin:0!important;padding:0!important;
-}
-/* Taller save/cancel area and more comfortable tap targets */
-.modal:has(.profile-settings-layout)>.modal-actions{
- min-height:76px!important;padding:16px 20px 18px!important;
- align-items:center!important;gap:12px!important;
-}
-.modal:has(.profile-settings-layout)>.modal-actions button{
- min-height:48px!important;padding:0 22px!important;
- border-radius:15px!important;font-size:14px!important;
-}
-.modal:has(.profile-settings-layout) .profile-cover-preview{
- display:block!important;visibility:visible!important;opacity:1!important;
- height:136px!important;min-height:136px!important;position:relative!important;
-}
-.modal:has(.profile-settings-layout) .profile-preview-row{
- display:flex!important;visibility:visible!important;opacity:1!important;
- min-height:82px!important;align-items:center!important;
-}
-.modal:has(.profile-settings-layout) .profile-edit-avatar{
- display:grid!important;visibility:visible!important;opacity:1!important;
- width:82px!important;height:82px!important;min-width:82px!important;
- min-height:82px!important;flex:0 0 82px!important;overflow:hidden!important;
-}
-.modal:has(.profile-settings-layout) .profile-edit-avatar img{
- display:block!important;width:100%!important;height:100%!important;object-fit:cover!important;
-}
-.modal:has(.profile-settings-layout) .profile-preview-name,
-.modal:has(.profile-settings-layout) .profile-preview-bio{display:block!important;visibility:visible!important;opacity:1!important}
-
-
 /* Restore the original compact color controls and keep swatches above glass button styling */
 .modal:has(.profile-settings-layout) .profile-color-row{
  display:flex!important;align-items:center!important;gap:10px!important;
@@ -402,49 +336,102 @@ body{background:#000}
  white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.55;
 }
 
-/* Final profile preview visibility and taller fixed save bar */
+/* Profile preview: image areas are independent and never masked or overlapped */
 .modal:has(.profile-settings-layout) .profile-settings-layout{
- padding-top:30px!important;
- -webkit-mask-image:linear-gradient(to bottom,black 0,black calc(100% - 30px),transparent 100%)!important;
- mask-image:linear-gradient(to bottom,black 0,black calc(100% - 30px),transparent 100%)!important;
+  flex:1 1 auto!important;min-height:0!important;max-height:none!important;
+  overflow-x:hidden!important;overflow-y:auto!important;
+  padding:14px 8px 26px 2px!important;margin:0 -2px!important;
+  -webkit-mask-image:none!important;mask-image:none!important;
+  clip-path:none!important;scrollbar-width:thin;
 }
 .modal:has(.profile-settings-layout) .profile-settings-preview{
- display:block!important;visibility:visible!important;opacity:1!important;
- position:relative!important;isolation:isolate!important;
- flex:0 0 auto!important;height:auto!important;min-height:0!important;
- overflow:visible!important;margin-top:0!important;
+  display:block!important;visibility:visible!important;opacity:1!important;
+  position:relative!important;isolation:isolate!important;
+  box-sizing:border-box!important;width:100%!important;height:auto!important;
+  min-height:0!important;flex:0 0 auto!important;
+  overflow:visible!important;clip-path:none!important;transform:none!important;
+  margin:0!important;border-radius:18px!important;
 }
 .modal:has(.profile-settings-layout) .profile-cover-preview{
- display:block!important;visibility:visible!important;opacity:1!important;
- position:relative!important;height:136px!important;min-height:136px!important;
- background-size:cover!important;background-position:center!important;
+  display:block!important;visibility:visible!important;opacity:1!important;
+  position:relative!important;z-index:0!important;
+  box-sizing:border-box!important;width:100%!important;
+  height:152px!important;min-height:152px!important;max-height:none!important;
+  margin:0!important;border-radius:17px 17px 0 0!important;
+  overflow:visible!important;clip-path:none!important;
+  background-size:cover!important;background-position:center!important;
+}
+.modal:has(.profile-settings-layout) .cover-tools{
+  position:absolute!important;z-index:3!important;right:12px!important;top:12px!important;
 }
 .modal:has(.profile-settings-layout) .profile-preview-row{
- display:flex!important;visibility:visible!important;opacity:1!important;
- position:relative!important;z-index:1!important;min-height:82px!important;
- align-items:center!important;overflow:visible!important;
+  display:flex!important;visibility:visible!important;opacity:1!important;
+  position:relative!important;z-index:2!important;
+  box-sizing:border-box!important;width:100%!important;
+  min-height:118px!important;height:auto!important;
+  margin:0!important;padding:16px 20px 18px!important;
+  gap:16px!important;align-items:center!important;
+  overflow:visible!important;clip-path:none!important;
+  transform:none!important;
 }
 .modal:has(.profile-settings-layout) .profile-edit-avatar,
-.modal:has(.profile-settings-layout) .profile-edit-avatar img{
- visibility:visible!important;opacity:1!important;
+.modal:has(.profile-settings-layout) .avatar-action{
+  display:grid!important;visibility:visible!important;opacity:1!important;
+  position:relative!important;z-index:3!important;
+  box-sizing:border-box!important;
+  width:88px!important;height:88px!important;
+  min-width:88px!important;min-height:88px!important;
+  max-width:88px!important;max-height:88px!important;
+  flex:0 0 88px!important;margin:0!important;padding:0!important;
+  border:5px solid var(--panel)!important;border-radius:50%!important;
+  overflow:hidden!important;clip-path:circle(50%)!important;
+  transform:none!important;
+}
+.modal:has(.profile-settings-layout) .profile-edit-avatar img,
+.modal:has(.profile-settings-layout) .avatar-action img{
+  display:block!important;visibility:visible!important;opacity:1!important;
+  position:static!important;width:100%!important;height:100%!important;
+  min-width:100%!important;min-height:100%!important;
+  max-width:none!important;max-height:none!important;
+  object-fit:cover!important;border-radius:50%!important;
+}
+.modal:has(.profile-settings-layout) .profile-preview-name{
+  display:flex!important;flex:1 1 auto!important;flex-direction:column!important;
+  justify-content:center!important;min-width:0!important;
+  visibility:visible!important;opacity:1!important;
+}
+.modal:has(.profile-settings-layout) .profile-preview-name strong,
+.modal:has(.profile-settings-layout) .profile-preview-name small{
+  display:block!important;max-width:100%!important;overflow-wrap:anywhere!important;
 }
 .modal:has(.profile-settings-layout)>.modal-actions{
- min-height:104px!important;height:104px!important;
- padding:22px 20px 26px!important;margin-top:10px!important;
- display:flex!important;align-items:center!important;gap:14px!important;
+  flex:0 0 auto!important;min-height:104px!important;height:104px!important;
+  padding:22px 20px 26px!important;margin-top:10px!important;
+  display:flex!important;align-items:center!important;gap:14px!important;
 }
 .modal:has(.profile-settings-layout)>.modal-actions button{
- min-height:58px!important;height:58px!important;
- padding:0 26px!important;border-radius:17px!important;
- font-size:15px!important;
+  min-height:58px!important;height:58px!important;
+  padding:0 26px!important;border-radius:17px!important;font-size:15px!important;
 }
 @media(max-width:560px){
- .modal:has(.profile-settings-layout)>.modal-actions{
-  min-height:100px!important;height:100px!important;padding:18px 14px 22px!important;
- }
- .modal:has(.profile-settings-layout)>.modal-actions button{
-  min-height:56px!important;height:56px!important;
- }
+  .modal:has(.profile-settings-layout) .profile-cover-preview{
+    height:132px!important;min-height:132px!important;
+  }
+  .modal:has(.profile-settings-layout) .profile-preview-row{
+    min-height:110px!important;padding:14px 14px 16px!important;gap:13px!important;
+  }
+  .modal:has(.profile-settings-layout) .profile-edit-avatar,
+  .modal:has(.profile-settings-layout) .avatar-action{
+    width:80px!important;height:80px!important;
+    min-width:80px!important;min-height:80px!important;
+    max-width:80px!important;max-height:80px!important;flex-basis:80px!important;
+  }
+  .modal:has(.profile-settings-layout)>.modal-actions{
+    min-height:100px!important;height:100px!important;padding:18px 14px 22px!important;
+  }
+  .modal:has(.profile-settings-layout)>.modal-actions button{
+    min-height:56px!important;height:56px!important;
+  }
 }
 </style>
 </head>
