@@ -147,6 +147,7 @@ function openModal(title,fields,submitText,onSubmit){
 }
 $('toggleAuth').onclick=()=>{authMode=authMode==='login'?'signup':'login';$('authTitle').textContent=authMode==='login'?'Đăng nhập':'Tạo tài khoản';$('authSubtitle').textContent=authMode==='login'?'Chào mừng bạn quay trở lại.':'Đăng ký bằng email và mật khẩu.';$('authSubmit').textContent=authMode==='login'?'Đăng nhập':'Đăng ký';$('toggleAuth').textContent=authMode==='login'?'Tạo tài khoản mới':'Đã có tài khoản? Đăng nhập';setStatus('authStatus','')};
 $('authForm').onsubmit=async e=>{e.preventDefault();const email=$('email').value.trim(),password=$('password').value;const b=$('authSubmit');b.disabled=true;setStatus('authStatus','Đang xử lý...');try{if(authMode==='signup'){const {data,error}=await db.auth.signUp({email,password,options:{data:{username:email.split('@')[0]},emailRedirectTo:'https://cyberamg.github.io/AnhNamDepTrai.github.io/'}});if(error)throw error;if(data.session){currentUser=data.user;await enterApp()}else setStatus('authStatus','Đăng ký thành công! Hãy kiểm tra email để xác minh, sau đó đăng nhập.')}else{const {data,error}=await db.auth.signInWithPassword({email,password});if(error)throw error;currentUser=data.user;await enterApp()}}catch(err){setStatus('authStatus',err.message)}finally{b.disabled=false}};
+$('userSettings').onclick=openUserSettings;
 $('signOut').onclick=async()=>{if(messageSubscription)await db.removeChannel(messageSubscription);await db.auth.signOut();currentUser=null;currentServer=null;currentChannel=null;showAuth()};
 function showInviteModal(server=currentServer){
  if(!server)return;
@@ -195,7 +196,55 @@ async function confirmJoinServer(code){openModal('Xác nhận tham gia server','
 function openJoinServer(){openModal('Tham gia server','<div class="notice">Bạn có thể nhập mã server hoặc dán đường link mời.</div><div class="field"><label>Mã server</label><input id="inviteInput" maxlength="80" autocomplete="off" placeholder="Nhập mã server"></div><div class="field"><label>Đường link server</label><input id="inviteUrlInput" maxlength="500" autocomplete="off" placeholder="Dán link mời tại đây"></div>','Tiếp tục',async()=>{let code=$('inviteInput').value.trim();const link=$('inviteUrlInput').value.trim();if(link){try{const parsed=new URL(link);code=parsed.searchParams.get('invite')||''}catch{throw Error('Đường link không hợp lệ.')}}if(!code)throw Error('Hãy nhập mã server hoặc đường link hợp lệ.');$('modalRoot').innerHTML='';await confirmJoinServer(code)});setTimeout(()=>$('inviteInput')?.focus(),50)}
 $('joinServer').addEventListener('click',openJoinServer);$('joinServerSide').addEventListener('click',openJoinServer);
 $('inviteBtn').onclick=()=>{if(currentServer)showInviteModal(currentServer);else openJoinServer()};
-async function enterApp(){showApp();$('myName').textContent=currentUser.email?.split('@')[0]||'Bạn';$('myAvatar').textContent=initials(currentUser.email);await loadServers();updateJoinControls();await handleInviteUrl()}
+
+let ownProfile={username:'',avatar_url:''};
+function paintOwnProfile(){
+ const name=ownProfile.username||currentUser?.email?.split('@')[0]||'Bạn';
+ $('myName').textContent=name;
+ const avatar=$('myAvatar');
+ if(ownProfile.avatar_url)avatar.innerHTML='<img src="'+esc(ownProfile.avatar_url)+'" alt="">';
+ else avatar.textContent=initials(name);
+}
+async function loadOwnProfile(){
+ if(!currentUser)return;
+ const {data,error}=await db.from('profiles').select('id,username,avatar_url').eq('id',currentUser.id).maybeSingle();
+ if(error)throw error;
+ ownProfile={username:data?.username||currentUser.email?.split('@')[0]||'Bạn',avatar_url:data?.avatar_url||''};
+ paintOwnProfile();
+ if(typeof callProfileCache!=='undefined')callProfileCache.set(currentUser.id,{id:currentUser.id,...ownProfile});
+}
+function openUserSettings(){
+ const name=ownProfile.username||currentUser?.email?.split('@')[0]||'';
+ const avatar=ownProfile.avatar_url;
+ const fields='<div class="profile-edit-head"><div class="profile-edit-avatar" id="profilePreview">'+(avatar?'<img src="'+esc(avatar)+'" alt="">':esc(initials(name)))+'</div><div><strong>Ảnh đại diện</strong><br><small>PNG, JPG, WEBP hoặc GIF · tối đa 5 MB</small></div></div><div class="field"><label for="profileNameInput">Tên hiển thị</label><input id="profileNameInput" maxlength="32" required value="'+esc(name)+'" placeholder="Nhập tên hiển thị"></div><div class="field"><label for="profileAvatarInput">Đổi ảnh đại diện</label><input class="profile-file" id="profileAvatarInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif"><div class="profile-hint">Ảnh sẽ hiển thị trong hồ sơ và phòng thoại.</div></div>';
+ openModal('Cài đặt tài khoản',fields,'Lưu thay đổi',async()=>{
+  const username=$('profileNameInput').value.trim();
+  const file=$('profileAvatarInput').files?.[0];
+  if(!username)throw Error('Tên hiển thị không được để trống.');
+  if(username.length>32)throw Error('Tên hiển thị tối đa 32 ký tự.');
+  if(file&&(!['image/png','image/jpeg','image/webp','image/gif'].includes(file.type)||file.size>5242880))throw Error('Ảnh phải đúng định dạng và nhỏ hơn 5 MB.');
+  let avatarUrl=ownProfile.avatar_url;
+  if(file){
+   const ext={'image/png':'png','image/jpeg':'jpg','image/webp':'webp','image/gif':'gif'}[file.type];
+   const path=currentUser.id+'/avatar-'+Date.now()+'.'+ext;
+   const {error:uploadError}=await db.storage.from('user-avatars').upload(path,file,{contentType:file.type,cacheControl:'3600',upsert:false});
+   if(uploadError)throw uploadError;
+   avatarUrl=db.storage.from('user-avatars').getPublicUrl(path).data.publicUrl;
+  }
+  const {error}=await db.from('profiles').update({username,avatar_url:avatarUrl}).eq('id',currentUser.id);
+  if(error)throw error;
+  ownProfile={username,avatar_url:avatarUrl};paintOwnProfile();
+  if(typeof callProfileCache!=='undefined')callProfileCache.set(currentUser.id,{id:currentUser.id,...ownProfile});
+  if(currentServer)await loadMembers(currentServer.id);
+  $('modalRoot').innerHTML='';
+ });
+ $('profileAvatarInput').addEventListener('change',()=>{
+  const file=$('profileAvatarInput').files?.[0];if(!file)return;
+  const preview=$('profilePreview');preview.innerHTML='<img src="'+URL.createObjectURL(file)+'" alt="">';
+ });
+}
+async function enterApp(){showApp();$('myName').textContent=currentUser.email?.split('@')[0]||'Bạn';$('myAvatar').textContent=initials(currentUser.email);await loadOwnProfile();await loadServers();updateJoinControls();await handleInviteUrl()}
+
 async function loadServers(){const {data,error}=await db.from('servers').select('id,name,invite_code,owner_id,created_at').order('created_at');if(error)throw error;servers=data||[];const rail=$('serverRail');rail.querySelectorAll('[data-server]').forEach(n=>n.remove());servers.forEach((s,i)=>{const b=document.createElement('button');b.className='server-icon'+(currentServer?.id===s.id?' active':'');b.dataset.server=s.id;b.title=s.name;b.textContent=initials(s.name);b.onclick=()=>selectServer(s.id);b.addEventListener('contextmenu',e=>showServerContext(e,s));$('addServer').before(b)});if(!currentServer&&servers.length)await selectServer(servers[0].id);updateJoinControls();if(!servers.length){currentServer=null;currentChannel=null;updateJoinControls();$('serverName').textContent='Gaming Hub';$('channelList').innerHTML='';$('messages').innerHTML='<div class="welcome"><div class="big">🎮</div><strong>Chưa có server</strong><p>Tạo server mới hoặc tham gia bằng mã mời.</p></div>'; $('messageInput').disabled=true}}
 async function selectServer(id){currentServer=servers.find(s=>s.id===id);if(!currentServer)return;updateJoinControls();document.querySelectorAll('[data-server]').forEach(b=>b.classList.toggle('active',b.dataset.server===id));$('serverName').textContent=currentServer.name;const {data:channels,error}=await db.from('channels').select('*').eq('server_id',id).order('created_at');if(error)throw error;$('channelList').innerHTML='';(channels||[]).forEach(ch=>{const el=document.createElement('div');el.className='channel';el.dataset.channel=ch.id;el.innerHTML='<span class="hash">'+(ch.type==='voice'?'◉':'#')+'</span><span>'+esc(ch.name)+'</span>'+(ch.type==='voice'?'<span style="margin-left:auto;color:#858995;font-size:10px">THOẠI</span>':'');el.onclick=()=>selectChannel(ch);$('channelList').append(el)});await loadMembers(id);const firstText=(channels||[]).find(ch=>ch.type!=='voice');if(firstText)await selectChannel(firstText);else{currentChannel=null;$('callBtn').classList.add('hidden');$('messages').innerHTML='<div class="empty-note">Server chưa có kênh chat.</div>';$('messageInput').disabled=true}}
 async function loadMembers(serverId){const {data,error}=await db.from('server_members').select('user_id,role').eq('server_id',serverId);if(error)throw error;const ids=(data||[]).map(x=>x.user_id);let profiles=[];if(ids.length){const r=await db.from('profiles').select('id,username,avatar_url').in('id',ids);if(!r.error)profiles=r.data||[]}const html=(data||[]).map(m=>{const p=profiles.find(x=>x.id===m.user_id);return '<div class="member"><span class="online"></span><span>'+esc(p?.username||'Thành viên')+'</span></div>'}).join('')||'<div class="member">Chưa có thành viên</div>';$('members').innerHTML=html;$('sideMembers').innerHTML=html}
