@@ -1549,4 +1549,27 @@ body{background:var(--panel)!important}
  #modalRoot .modal:has(.profile-settings-layout){width:94vw!important;max-height:92vh!important;padding:5px!important}
  #modalRoot .modal:has(.profile-settings-layout)>.profile-settings-layout{max-height:calc(92vh - 16px)!important;padding:0!important}
 }
+
+/* Final Liquid Glass finish for profile settings */
+#modalRoot .modal:has(.profile-settings-layout){
+ background:
+  radial-gradient(120% 85% at 0% 0%,rgba(255,255,255,.105),transparent 55%),
+  linear-gradient(145deg,rgba(37,41,54,.82),rgba(15,17,25,.78))!important;
+ border:1px solid rgba(255,255,255,.16)!important;
+ box-shadow:0 26px 80px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.18),inset 0 -1px 0 rgba(255,255,255,.035)!important;
+ -webkit-backdrop-filter:blur(30px) saturate(175%)!important;
+ backdrop-filter:blur(30px) saturate(175%)!important;
+}
+#modalRoot .modal:has(.profile-settings-layout)::after{
+ border-color:rgba(255,255,255,.13)!important;
+ box-shadow:inset 0 0 24px rgba(255,255,255,.025)!important;
+}
+#modalRoot .modal:has(.profile-settings-layout) .profile-settings-preview,
+#modalRoot .modal:has(.profile-settings-layout) .profile-settings-section{
+ background:linear-gradient(145deg,rgba(255,255,255,.085),rgba(255,255,255,.025))!important;
+ border:1px solid rgba(255,255,255,.105)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.11),0 8px 24px rgba(0,0,0,.10)!important;
+ -webkit-backdrop-filter:blur(20px) saturate(155%)!important;
+ backdrop-filter:blur(20px) saturate(155%)!important;
+}
 </style>
