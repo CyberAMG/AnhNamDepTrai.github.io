@@ -893,7 +893,10 @@ function applyUserTheme(profile=ownProfile){
  const text=light?'#171923':'#f1f2f5',muted=light?'#626777':'#858995';
  let style=document.getElementById('userThemeStyle');if(!style){style=document.createElement('style');style.id='userThemeStyle';document.head.append(style)}
  style.textContent=':root{color-scheme:'+(light?'light':'dark')+';--accent:'+accent+';--accent2:'+accent+';--bg:'+bg+';--panel:'+panel+';--panel2:'+panel2+';--line:'+line+';--text:'+text+';--muted:'+muted+'}'+
- 'body,.app,.main,.chat-scroll,.chat-area,.content-area{background:var(--bg)!important;color:var(--text)!important}'+
+ 'body,.app{background:var(--panel)!important;color:var(--text)!important}'+
+ '.main{background:var(--panel)!important;color:var(--text)!important}'+
+ '.main>.chat-scroll{background:var(--bg)!important;color:var(--text)!important}'+
+ '.chat-area,.content-area{background:var(--bg)!important;color:var(--text)!important}'+
  '.side,.member-panel,.server-rail,.modal,.profile-settings-section,.profile-settings-preview{background:var(--panel)!important;color:var(--text)!important;border-color:var(--line)!important}'+
  '.topbar,.side-bottom,.channel-list,.member-list,.server-header{background:var(--panel)!important;color:var(--text)!important;border-color:var(--line)!important}'+
  '.topbar,.side-bottom,.channel,.member,.server-name,.section-label,.user-meta,.modal h2{color:var(--text)!important}'+
