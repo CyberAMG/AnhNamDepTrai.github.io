@@ -617,7 +617,7 @@ body{background:#000}
  </div>
 </section>
 <section id="appView" class="app hidden">
- <nav class="server-rail" id="serverRail"><div class="server-icon active" title="Gaming Hub">G</div><div class="rail-divider"></div><button class="server-icon add-server" id="addServer" title="Tạo server">+</button><button class="server-icon" id="joinServer" title="Tham gia server">↗</button><div class="rail-spacer"></div><button class="server-icon rail-settings" id="userSettings" title="Cài đặt tài khoản" aria-label="Cài đặt tài khoản">⚙</button></nav>
+ <nav class="server-rail" id="serverRail"><div class="server-icon active" title="Gaming Hub">G</div><div class="rail-divider"></div><button class="server-icon add-server" id="addServer" title="Tạo server">+</button><button class="server-icon" id="joinServer" title="Tham gia server">↗</button><div class="rail-spacer"></div><button class="server-icon rail-settings" id="userSettings" title="Cài đặt tài khoản" aria-label="Cài đặt tài khoản"><span class="gear-icon" aria-hidden="true">⚙</span></button></nav>
  <aside class="side">
   <div class="side-head"><span id="serverName">Gaming Hub</span><button class="icon-btn" id="serverMenu" title="Cài đặt server">⚙</button></div>
   <div class="side-body"><button class="join-server-link" id="joinServerSide" type="button">＋　Tham gia server</button><button class="join-server-link" id="serverCodeSide" type="button" hidden>⌁　Code server</button><div class="section-row"><div class="section-label">KÊNH</div><button class="mini-add" id="addChannelBtn" title="Tạo kênh">＋</button></div><div id="channelList"></div><div class="section-row"><div class="section-label">THÀNH VIÊN</div><button class="mini-add" id="addMemberBtn" title="Mời thành viên">＋</button></div><div id="sideMembers"></div></div>
@@ -666,7 +666,7 @@ function setStatus(id,msg){$(id).textContent=msg||''}
 function showAuth(){ $('authView').classList.remove('hidden');$('appView').classList.add('hidden')}
 function showApp(){ $('authView').classList.add('hidden');$('appView').classList.remove('hidden')}
 function openModal(title,fields,submitText,onSubmit){
- const root=$('modalRoot');root.innerHTML='<div class="modal-backdrop"><div class="modal'+(fields.includes('profile-settings-layout')?' profile-settings-modal':'')+'"><h2>'+esc(title)+'</h2>'+fields+'<div class="status" id="modalStatus"></div><div class="modal-actions"><button class="ghost" id="modalCancel">Hủy</button><button class="primary" id="modalSubmit">'+esc(submitText)+'</button></div></div></div>';
+ const root=$('modalRoot');const isProfileSettings=fields.includes('profile-settings-layout');root.innerHTML='<div class="modal-backdrop"><div class="modal'+(isProfileSettings?' profile-settings-modal':'')+'">'+(isProfileSettings?'':'<h2>'+esc(title)+'</h2>')+fields+'<div class="status" id="modalStatus"></div><div class="modal-actions"><button class="ghost" id="modalCancel">Hủy</button><button class="primary" id="modalSubmit">'+esc(submitText)+'</button></div></div></div>';
  root.querySelector('.modal-backdrop').addEventListener('click',e=>{if(e.target.classList.contains('modal-backdrop'))root.innerHTML=''});
  $('modalCancel').onclick=()=>root.innerHTML='';
  $('modalSubmit').onclick=async()=>{const b=$('modalSubmit');b.disabled=true;try{await onSubmit()}catch(e){setStatus('modalStatus',e.message||'Có lỗi xảy ra')}finally{b.disabled=false}};
@@ -1120,4 +1120,41 @@ $('callBtn').onclick=startCall;
   .modal.profile-settings-modal>.modal-actions{padding:4px 7px 1px!important}
   .modal.profile-settings-modal>.modal-actions button{min-height:35px!important;height:35px!important}
 }
+
+/* Refined account settings button and profile modal footer */
+.rail-settings{
+  position:relative;isolation:isolate;
+  width:46px;height:46px;border-radius:16px!important;
+  display:grid;place-items:center;
+  background:linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.018))!important;
+  border:1px solid rgba(255,255,255,.09)!important;
+  color:#c9cedb!important;
+  box-shadow:0 3px 12px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.07);
+  transition:background .28s ease,border-color .28s ease,box-shadow .28s ease,transform .28s cubic-bezier(.2,.8,.2,1),color .28s ease!important;
+}
+.rail-settings::before{
+  content:"";position:absolute;inset:-1px;border-radius:inherit;z-index:-1;
+  background:linear-gradient(135deg,var(--accent),transparent 68%);
+  opacity:0;filter:blur(9px);transition:opacity .3s ease;
+}
+.gear-icon{display:block;font-size:20px;line-height:1;transform:rotate(0);transition:transform .65s cubic-bezier(.2,.8,.2,1),color .25s ease}
+.rail-settings:hover{
+  color:#fff!important;background:linear-gradient(145deg,color-mix(in srgb,var(--accent) 35%,#252832),rgba(255,255,255,.055))!important;
+  border-color:color-mix(in srgb,var(--accent) 58%,rgba(255,255,255,.2))!important;
+  box-shadow:0 7px 22px rgba(0,0,0,.28),0 0 18px color-mix(in srgb,var(--accent) 28%,transparent),inset 0 1px 0 rgba(255,255,255,.16);
+  transform:translateY(-2px) scale(1.035);
+}
+.rail-settings:hover::before{opacity:.55}
+.rail-settings:hover .gear-icon{transform:rotate(105deg);color:#fff}
+.rail-settings:active{transform:translateY(0) scale(.96)}
+.rail-settings:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+@media(prefers-reduced-motion:reduce){.rail-settings,.gear-icon,.rail-settings::before{transition:none!important}.rail-settings:hover .gear-icon{transform:none}}
+.modal.profile-settings-modal{padding:12px 18px 8px!important}
+.modal.profile-settings-modal>.modal-actions{margin:4px 0 0!important;padding:4px 12px 1px!important}
+.modal.profile-settings-modal>.modal-actions button{
+  min-height:34px!important;height:34px!important;padding:0 16px!important;
+  font-size:12px!important;font-weight:500!important;letter-spacing:.01em;
+}
+.modal.profile-settings-modal>.modal-actions #modalSubmit{font-weight:500!important}
+@media(max-width:560px){.modal.profile-settings-modal{padding:10px 12px 7px!important}.modal.profile-settings-modal>.modal-actions{padding:3px 7px 0!important}}
 </style>
