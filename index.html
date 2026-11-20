@@ -628,7 +628,7 @@ body{background:#000}
   <div class="chat-scroll" id="messages"><div class="welcome"><div class="big">🎮</div><strong>Chào mừng đến Gaming Hub</strong><p>Chọn server hoặc tạo server mới để bắt đầu.</p></div></div>
   <div class="composer-wrap"><form class="composer" id="messageForm"><input id="messageInput" autocomplete="off" placeholder="Chọn kênh để bắt đầu nhắn tin..." disabled><button class="send" type="submit" aria-label="Gửi tin nhắn"><svg class="send-arrow" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button></form></div>
  </main>
- <aside class="member-panel"><div class="section-label">THÀNH VIÊN TRỰC TUYẾN</div><div id="members"></div></aside>
+ <div class="member-dock" id="memberDock"><button class="member-dock-toggle" id="memberDockToggle" type="button" aria-label="Mở danh sách thành viên" aria-expanded="false" title="Thành viên"><span class="member-dock-chevron">‹</span></button><aside class="member-panel" id="memberPanel"><div class="section-label">THÀNH VIÊN TRỰC TUYẾN</div><div id="members"></div></aside></div>
 </section>
 <div id="modalRoot"></div>
 <script>
@@ -660,6 +660,22 @@ function getSupabaseClient(){
 }
 let currentUser=null,currentServer=null,currentChannel=null,messageSubscription=null,profileSyncSubscription=null,authMode='login',servers=[];
 const $=id=>document.getElementById(id);
+const memberDock=$('memberDock'),memberDockToggle=$('memberDockToggle');
+if(memberDock&&memberDockToggle){
+ memberDockToggle.addEventListener('click',()=>{
+  const pinned=memberDock.classList.toggle('pinned');
+  memberDockToggle.setAttribute('aria-expanded',String(pinned));
+  memberDockToggle.setAttribute('aria-label',pinned?'Thu gọn danh sách thành viên':'Mở danh sách thành viên');
+ });
+ memberDock.addEventListener('keydown',event=>{
+  if(event.key==='Escape'&&memberDock.classList.contains('pinned')){
+   memberDock.classList.remove('pinned');
+   memberDockToggle.setAttribute('aria-expanded','false');
+   memberDockToggle.setAttribute('aria-label','Mở danh sách thành viên');
+   memberDockToggle.focus();
+  }
+ });
+}
 function trackButtonSpotlight(button){
  if(!button)return;
  button.addEventListener('pointermove',event=>{
@@ -1195,5 +1211,66 @@ $('callBtn').onclick=startCall;
 @media(prefers-reduced-motion:reduce){
  #messageForm>.send,.send-arrow,#messageForm>.send::before{transition:none!important}
  #messageForm>.send:hover .send-arrow{transform:none}
+}
+
+/* Rounded floating chat workspace and retractable member dock */
+.main{
+ margin:10px 8px 10px 10px!important;
+ border:1px solid rgba(255,255,255,.055);
+ border-radius:20px!important;
+ overflow:hidden;
+ min-height:0;
+ box-shadow:0 8px 28px rgba(0,0,0,.14);
+}
+.main>.topbar{border-radius:20px 20px 0 0}
+.main>.composer-wrap{padding-bottom:16px}
+.member-dock{
+ position:relative;z-index:4;flex:0 0 34px;width:34px;min-width:34px;
+ align-self:stretch;margin:10px 0;display:flex;align-items:center;justify-content:center;
+}
+.member-dock-toggle{
+ position:absolute;z-index:2;left:0;top:50%;transform:translateY(-50%);
+ width:28px;height:76px;border-radius:13px 0 0 13px;
+ display:grid;place-items:center;
+ color:#bfc4d2;background:linear-gradient(90deg,rgba(255,255,255,.085),rgba(255,255,255,.035));
+ border:1px solid rgba(255,255,255,.09);border-right:0;
+ box-shadow:-5px 4px 18px rgba(0,0,0,.18);
+ cursor:pointer;transition:background .25s ease,color .25s ease,box-shadow .25s ease;
+}
+.member-dock-toggle:hover,.member-dock.pinned .member-dock-toggle{
+ color:#fff;background:color-mix(in srgb,var(--accent) 24%,#20232b);
+ box-shadow:-5px 4px 22px color-mix(in srgb,var(--accent) 18%,transparent);
+}
+.member-dock-chevron{font-size:25px;line-height:1;transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.member-panel{
+ position:absolute;z-index:1;right:34px;top:0;bottom:0;
+ width:224px;max-width:min(224px,calc(100vw - 110px));
+ margin:0;padding:20px 14px;
+ border:1px solid rgba(255,255,255,.075)!important;border-right:0;
+ border-radius:18px 0 0 18px;
+ background:color-mix(in srgb,var(--panel) 94%,#000)!important;
+ box-shadow:-14px 8px 34px rgba(0,0,0,.28);
+ overflow:auto;
+ transform:translateX(calc(100% + 34px));
+ opacity:.35;visibility:hidden;pointer-events:none;
+ transition:transform .38s cubic-bezier(.22,.8,.22,1),opacity .25s ease,visibility .38s;
+}
+.member-dock:hover .member-panel,.member-dock:focus-within .member-panel,.member-dock.pinned .member-panel{
+ transform:translateX(0);opacity:1;visibility:visible;pointer-events:auto;
+}
+.member-dock:hover .member-dock-chevron,.member-dock:focus-within .member-dock-chevron,.member-dock.pinned .member-dock-chevron{transform:rotate(180deg)}
+@media(max-width:900px){
+ .member-dock{flex-basis:30px;width:30px;min-width:30px}
+ .member-dock-toggle{width:26px;height:66px}
+ .member-panel{right:30px;width:min(224px,calc(100vw - 90px));max-width:calc(100vw - 90px)}
+}
+@media(max-width:620px){
+ .main{margin:7px 5px 7px 6px!important;border-radius:16px!important}
+ .member-dock{flex-basis:27px;width:27px;min-width:27px;margin:7px 0}
+ .member-dock-toggle{width:24px;height:60px}
+ .member-panel{right:27px;border-radius:15px 0 0 15px;padding:16px 10px}
+}
+@media(prefers-reduced-motion:reduce){
+ .member-dock-toggle,.member-dock-chevron,.member-panel{transition:none!important}
 }
 </style>
