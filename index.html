@@ -650,45 +650,36 @@ body{background:#000}
  position:relative!important;
  z-index:2!important;
  padding-bottom:12px!important;
- isolation:auto!important;
 }
 @media(max-width:620px){
  .main{margin:7px 0 7px 6px!important;border-radius:16px!important}
  .main>.topbar{top:8px!important;right:9px!important}
 }
-/* Stronger, longer matching fades at the top edge and input-bar edge */
+/* Top and bottom fades use the same 18px band; bottom is anchored to the input bar */
 .chat-scroll{
- /* Keep the scroll surface unmasked so the composer backdrop-filter can sample it. */
- -webkit-mask-image:none!important;
- mask-image:none!important;
+ -webkit-mask-image:linear-gradient(to bottom,transparent 0,black 18px,black 100%)!important;
+ mask-image:linear-gradient(to bottom,transparent 0,black 18px,black 100%)!important;
 }
 .chat-scroll::before{
- content:"";position:absolute;left:0;right:0;top:0;height:28px;
+ content:"";position:absolute;left:0;right:0;top:0;height:18px;
  pointer-events:none;z-index:3;
- -webkit-backdrop-filter:blur(10px);
- backdrop-filter:blur(10px);
+ -webkit-backdrop-filter:blur(6px);
+ backdrop-filter:blur(6px);
  -webkit-mask-image:linear-gradient(to bottom,black 0%,transparent 100%);
  mask-image:linear-gradient(to bottom,black 0%,transparent 100%);
 }
-/* Bottom fade: a visible translucent veil plus backdrop blur, anchored to the composer top edge. */
-.main>.composer-wrap{
- isolation:auto!important;
-}
+/* The composer wrapper is above the chat layer. Its fade ends exactly at the form's top edge. */
 .main>.composer-wrap::before{
- content:"";
- position:absolute;
- left:0;right:0;
- top:-30px;height:42px;
- display:block;
- pointer-events:none;
- z-index:5;
- background:linear-gradient(to bottom,rgba(0,0,0,0),rgba(0,0,0,.24));
- -webkit-backdrop-filter:blur(16px) saturate(1.12);
- backdrop-filter:blur(16px) saturate(1.12);
+ content:"";position:absolute;left:0;right:0;top:-6px;height:18px;
+ pointer-events:none;z-index:1;
+ -webkit-backdrop-filter:blur(6px);
+ backdrop-filter:blur(6px);
+ -webkit-mask-image:linear-gradient(to bottom,transparent 0%,black 100%);
+ mask-image:linear-gradient(to bottom,transparent 0%,black 100%);
 }
-.main>.composer-wrap>#messageForm{position:relative;z-index:6}
+.main>.composer-wrap>#messageForm{position:relative;z-index:2}
 @media(max-width:620px){
- .main>.composer-wrap::before{top:-32px;left:0;right:0;height:44px}
+ .main>.composer-wrap::before{top:-8px;left:0;right:0;height:18px}
 }
 
 </style>
