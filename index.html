@@ -655,6 +655,12 @@ body{background:#000}
  .main{margin:7px 0 7px 6px!important;border-radius:16px!important}
  .main>.topbar{top:8px!important;right:9px!important}
 }
+/* Slightly thinner fade at the bottom edge of the chat, above the message composer */
+.chat-scroll{
+ -webkit-mask-image:linear-gradient(to bottom,transparent 0,black 22px,black calc(100% - 12px),transparent 100%)!important;
+ mask-image:linear-gradient(to bottom,transparent 0,black 22px,black calc(100% - 12px),transparent 100%)!important;
+}
+
 </style>
 </head>
 <body>
