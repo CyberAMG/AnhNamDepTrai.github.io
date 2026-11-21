@@ -893,6 +893,11 @@ function applyUserTheme(profile=ownProfile){
  const line=light?'#d9dce5':mixColor(panel,'#ffffff',.12);
  const text=light?'#171923':'#f1f2f5',muted=light?'#626777':'#858995';
  let style=document.getElementById('userThemeStyle');if(!style){style=document.createElement('style');style.id='userThemeStyle';document.head.append(style)}
+ const chatFrame=document.querySelector('#appView>.main');
+ if(chatFrame){
+  chatFrame.style.setProperty('background-color',chatSurface,'important');
+  chatFrame.querySelectorAll(':scope>.topbar,:scope>.chat-scroll,:scope>.composer-wrap').forEach(layer=>layer.style.setProperty('background-color','transparent','important'));
+ }
  style.textContent=':root{color-scheme:'+(light?'light':'dark')+';--accent:'+accent+';--accent2:'+accent+';--bg:'+bg+';--panel:'+panel+';--chat-surface:'+chatSurface+';--panel2:'+panel2+';--line:'+line+';--text:'+text+';--muted:'+muted+'}'+
  'body,.app{background:var(--panel)!important;color:var(--text)!important}'+
  '.app>.main,.main{background:var(--chat-surface)!important;color:var(--text)!important}'+
