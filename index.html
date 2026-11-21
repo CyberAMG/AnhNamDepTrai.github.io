@@ -655,31 +655,27 @@ body{background:#000}
  .main{margin:7px 0 7px 6px!important;border-radius:16px!important}
  .main>.topbar{top:8px!important;right:9px!important}
 }
-/* Matching top and bottom edge fades, slightly stronger and wider. */
+/* Matching top and bottom blur bands live inside the message scroller. */
 .chat-scroll{
  -webkit-mask-image:linear-gradient(to bottom,transparent 0,black 24px,black 100%)!important;
  mask-image:linear-gradient(to bottom,transparent 0,black 24px,black 100%)!important;
 }
-.chat-scroll::before{
- content:"";position:absolute;left:0;right:0;top:0;height:24px;
+.chat-scroll::before,
+.chat-scroll::after{
+ content:"";position:absolute;left:0;right:0;height:24px;
  pointer-events:none;z-index:3;
  -webkit-backdrop-filter:blur(9px);
  backdrop-filter:blur(9px);
+}
+.chat-scroll::before{
+ top:0;
  -webkit-mask-image:linear-gradient(to bottom,black 0%,transparent 100%);
  mask-image:linear-gradient(to bottom,black 0%,transparent 100%);
 }
-/* Mirror the same blur strength and fade length directly above the composer. */
-.main>.composer-wrap::before{
- content:"";position:absolute;left:0;right:0;top:-12px;height:24px;
- pointer-events:none;z-index:1;
- -webkit-backdrop-filter:blur(9px);
- backdrop-filter:blur(9px);
- -webkit-mask-image:linear-gradient(to bottom,transparent 0%,black 100%);
- mask-image:linear-gradient(to bottom,transparent 0%,black 100%);
-}
-.main>.composer-wrap>#messageForm{position:relative;z-index:2}
-@media(max-width:620px){
- .main>.composer-wrap::before{top:-14px;left:0;right:0;height:24px}
+.chat-scroll::after{
+ bottom:0;
+ -webkit-mask-image:linear-gradient(to top,black 0%,transparent 100%);
+ mask-image:linear-gradient(to top,black 0%,transparent 100%);
 }
 
 </style>
