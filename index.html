@@ -655,28 +655,30 @@ body{background:#000}
  .main{margin:7px 0 7px 6px!important;border-radius:16px!important}
  .main>.topbar{top:8px!important;right:9px!important}
 }
-/* Matching top and bottom blur bands live inside the message scroller. */
+/* Top fade stays on the scroller; bottom fade overlays the chat from .main. */
 .chat-scroll{
  -webkit-mask-image:linear-gradient(to bottom,transparent 0,black 24px,black 100%)!important;
  mask-image:linear-gradient(to bottom,transparent 0,black 24px,black 100%)!important;
 }
-.chat-scroll::before,
-.chat-scroll::after{
- content:"";position:absolute;left:0;right:0;height:24px;
+.chat-scroll::before{
+ content:"";position:absolute;left:0;right:0;top:0;height:24px;
  pointer-events:none;z-index:3;
  -webkit-backdrop-filter:blur(9px);
  backdrop-filter:blur(9px);
-}
-.chat-scroll::before{
- top:0;
  -webkit-mask-image:linear-gradient(to bottom,black 0%,transparent 100%);
  mask-image:linear-gradient(to bottom,black 0%,transparent 100%);
 }
-.chat-scroll::after{
- bottom:0;
+/* Keep the lower blur out of the isolated composer layer so it can sample messages behind it. */
+.main::after{
+ content:"";position:absolute;left:0;right:0;bottom:80px;height:28px;
+ pointer-events:none;z-index:3;
+ -webkit-backdrop-filter:blur(9px);
+ backdrop-filter:blur(9px);
  -webkit-mask-image:linear-gradient(to top,black 0%,transparent 100%);
  mask-image:linear-gradient(to top,black 0%,transparent 100%);
 }
+@media(max-width:620px){.main::after{bottom:78px;height:28px}}
+.main:has(>.composer-wrap.hidden)::after{display:none}
 
 </style>
 </head>
