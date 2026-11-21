@@ -888,14 +888,15 @@ function applyUserTheme(profile=ownProfile){
  const accent=safeColor(profile.accent_color,'#5865f2');
  const bg=light?'#f3f4f8':safeColor(profile.background_color,'#000000');
  const panel=light?'#ffffff':safeColor(profile.panel_color,'#08090b');
+ const chatSurface=light?'#ffffff':'#000000';
  const panel2=light?'#e9ebf2':mixColor(panel,'#ffffff',.055);
  const line=light?'#d9dce5':mixColor(panel,'#ffffff',.12);
  const text=light?'#171923':'#f1f2f5',muted=light?'#626777':'#858995';
  let style=document.getElementById('userThemeStyle');if(!style){style=document.createElement('style');style.id='userThemeStyle';document.head.append(style)}
- style.textContent=':root{color-scheme:'+(light?'light':'dark')+';--accent:'+accent+';--accent2:'+accent+';--bg:'+bg+';--panel:'+panel+';--panel2:'+panel2+';--line:'+line+';--text:'+text+';--muted:'+muted+'}'+
+ style.textContent=':root{color-scheme:'+(light?'light':'dark')+';--accent:'+accent+';--accent2:'+accent+';--bg:'+bg+';--panel:'+panel+';--chat-surface:'+chatSurface+';--panel2:'+panel2+';--line:'+line+';--text:'+text+';--muted:'+muted+'}'+
  'body,.app{background:var(--panel)!important;color:var(--text)!important}'+
  '.main{background:var(--panel)!important;color:var(--text)!important}'+
- '.main>.chat-scroll{background:#000000!important;color:var(--text)!important}'+
+ '.main>.chat-scroll{background:var(--chat-surface)!important;color:var(--text)!important}'+
  '.chat-area,.content-area{background:var(--bg)!important;color:var(--text)!important}'+
  '.side,.member-panel,.server-rail,.modal,.profile-settings-section,.profile-settings-preview{background:var(--panel)!important;color:var(--text)!important;border-color:var(--line)!important}'+
  '.topbar,.side-bottom,.channel-list,.member-list,.server-header{background:var(--panel)!important;color:var(--text)!important;border-color:var(--line)!important}'+
