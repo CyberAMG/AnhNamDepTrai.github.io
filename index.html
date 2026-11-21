@@ -656,52 +656,39 @@ body{background:#000}
  .main{margin:7px 0 7px 6px!important;border-radius:16px!important}
  .main>.topbar{top:8px!important;right:9px!important}
 }
-/* Samsung One UI-style edge blur: clear surface, progressive blur, no dark overlay. */
+/* Stronger, longer matching fades at the top edge and input-bar edge */
 .chat-scroll{
+ /* Keep the scroll surface unmasked so the composer backdrop-filter can sample it. */
  -webkit-mask-image:none!important;
  mask-image:none!important;
 }
 .chat-scroll::before{
- content:"";
- position:sticky;
- top:0;
- display:block;
- flex:0 0 38px;
- height:38px;
- margin-bottom:-38px;
- margin-left:-22px;
- margin-right:-22px;
- pointer-events:none;
- z-index:8;
- -webkit-backdrop-filter:blur(18px) saturate(1.18);
- backdrop-filter:blur(18px) saturate(1.18);
- -webkit-mask-image:linear-gradient(to bottom,black 0%,rgba(0,0,0,.72) 42%,transparent 100%);
- mask-image:linear-gradient(to bottom,black 0%,rgba(0,0,0,.72) 42%,transparent 100%);
+ content:"";position:absolute;left:0;right:0;top:0;height:28px;
+ pointer-events:none;z-index:3;
+ -webkit-backdrop-filter:blur(10px);
+ backdrop-filter:blur(10px);
+ -webkit-mask-image:linear-gradient(to bottom,black 0%,transparent 100%);
+ mask-image:linear-gradient(to bottom,black 0%,transparent 100%);
 }
-/* Mirror the same soft, progressive blur at the lower edge, without tinting the chat. */
+/* Bottom fade: a visible translucent veil plus backdrop blur, anchored to the composer top edge. */
 .main>.composer-wrap{
  isolation:auto!important;
 }
 .main>.composer-wrap::before{
  content:"";
  position:absolute;
- left:0;
- right:0;
- top:-38px;
- height:50px;
+ left:0;right:0;
+ top:-30px;height:42px;
  display:block;
  pointer-events:none;
  z-index:5;
- background:transparent;
- -webkit-backdrop-filter:blur(18px) saturate(1.18);
- backdrop-filter:blur(18px) saturate(1.18);
- -webkit-mask-image:linear-gradient(to top,black 0%,rgba(0,0,0,.72) 42%,transparent 100%);
- mask-image:linear-gradient(to top,black 0%,rgba(0,0,0,.72) 42%,transparent 100%);
+ background:linear-gradient(to bottom,rgba(0,0,0,0),rgba(0,0,0,.24));
+ -webkit-backdrop-filter:blur(16px) saturate(1.12);
+ backdrop-filter:blur(16px) saturate(1.12);
 }
 .main>.composer-wrap>#messageForm{position:relative;z-index:6}
 @media(max-width:620px){
- .chat-scroll::before{margin-left:-15px;margin-right:-15px}
- .main>.composer-wrap::before{top:-38px;left:0;right:0;height:50px}
+ .main>.composer-wrap::before{top:-32px;left:0;right:0;height:44px}
 }
 
 </style>
