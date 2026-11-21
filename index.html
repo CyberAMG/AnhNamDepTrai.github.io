@@ -655,7 +655,7 @@ body{background:#000}
  .main{margin:7px 0 7px 6px!important;border-radius:16px!important}
  .main>.topbar{top:8px!important;right:9px!important}
 }
-/* Symmetric 18px blur fades: top of chat and directly above the composer */
+/* Top and bottom fades use the same 18px band; bottom is anchored to the input bar */
 .chat-scroll{
  -webkit-mask-image:linear-gradient(to bottom,transparent 0,black 18px,black 100%)!important;
  mask-image:linear-gradient(to bottom,transparent 0,black 18px,black 100%)!important;
@@ -668,16 +668,18 @@ body{background:#000}
  -webkit-mask-image:linear-gradient(to bottom,black 0%,transparent 100%);
  mask-image:linear-gradient(to bottom,black 0%,transparent 100%);
 }
-#messageForm::before{
- content:"";position:absolute;left:-20px;right:-20px;top:-30px;height:30px;
- pointer-events:none;z-index:3;
+/* The composer wrapper is above the chat layer. Its fade ends exactly at the form's top edge. */
+.main>.composer-wrap::before{
+ content:"";position:absolute;left:0;right:0;top:-6px;height:18px;
+ pointer-events:none;z-index:1;
  -webkit-backdrop-filter:blur(6px);
  backdrop-filter:blur(6px);
  -webkit-mask-image:linear-gradient(to bottom,transparent 0%,black 100%);
  mask-image:linear-gradient(to bottom,transparent 0%,black 100%);
 }
+.main>.composer-wrap>#messageForm{position:relative;z-index:2}
 @media(max-width:620px){
- #messageForm::before{left:-10px;right:-10px;top:-28px;height:28px}
+ .main>.composer-wrap::before{top:-8px;left:0;right:0;height:18px}
 }
 
 </style>
