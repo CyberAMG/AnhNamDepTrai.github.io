@@ -655,31 +655,31 @@ body{background:#000}
  .main{margin:7px 0 7px 6px!important;border-radius:16px!important}
  .main>.topbar{top:8px!important;right:9px!important}
 }
-/* Top and bottom fades use the same 18px band; bottom is anchored to the input bar */
+/* Matching top and bottom edge fades, slightly stronger and wider. */
 .chat-scroll{
- -webkit-mask-image:linear-gradient(to bottom,transparent 0,black 18px,black 100%)!important;
- mask-image:linear-gradient(to bottom,transparent 0,black 18px,black 100%)!important;
+ -webkit-mask-image:linear-gradient(to bottom,transparent 0,black 24px,black 100%)!important;
+ mask-image:linear-gradient(to bottom,transparent 0,black 24px,black 100%)!important;
 }
 .chat-scroll::before{
- content:"";position:absolute;left:0;right:0;top:0;height:18px;
+ content:"";position:absolute;left:0;right:0;top:0;height:24px;
  pointer-events:none;z-index:3;
- -webkit-backdrop-filter:blur(6px);
- backdrop-filter:blur(6px);
+ -webkit-backdrop-filter:blur(9px);
+ backdrop-filter:blur(9px);
  -webkit-mask-image:linear-gradient(to bottom,black 0%,transparent 100%);
  mask-image:linear-gradient(to bottom,black 0%,transparent 100%);
 }
-/* The composer wrapper is above the chat layer. Its fade ends exactly at the form's top edge. */
+/* Mirror the same blur strength and fade length directly above the composer. */
 .main>.composer-wrap::before{
- content:"";position:absolute;left:0;right:0;top:-6px;height:18px;
+ content:"";position:absolute;left:0;right:0;top:-12px;height:24px;
  pointer-events:none;z-index:1;
- -webkit-backdrop-filter:blur(6px);
- backdrop-filter:blur(6px);
+ -webkit-backdrop-filter:blur(9px);
+ backdrop-filter:blur(9px);
  -webkit-mask-image:linear-gradient(to bottom,transparent 0%,black 100%);
  mask-image:linear-gradient(to bottom,transparent 0%,black 100%);
 }
 .main>.composer-wrap>#messageForm{position:relative;z-index:2}
 @media(max-width:620px){
- .main>.composer-wrap::before{top:-8px;left:0;right:0;height:18px}
+ .main>.composer-wrap::before{top:-14px;left:0;right:0;height:24px}
 }
 
 </style>
