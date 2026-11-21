@@ -670,18 +670,25 @@ body{background:#000}
  -webkit-mask-image:linear-gradient(to bottom,black 0%,transparent 100%);
  mask-image:linear-gradient(to bottom,black 0%,transparent 100%);
 }
-/* Bottom fade lives on the wrapper layer and ends exactly at the form's top edge. */
-.main>.composer-wrap::before{
- content:"";position:absolute;left:0;right:0;top:-16px;height:28px;
- pointer-events:none;z-index:1;
- -webkit-backdrop-filter:blur(10px);
- backdrop-filter:blur(10px);
- -webkit-mask-image:linear-gradient(to bottom,transparent 0%,black 100%);
- mask-image:linear-gradient(to bottom,transparent 0%,black 100%);
+/* Bottom fade: a visible translucent veil plus backdrop blur, anchored to the composer top edge. */
+.main>.composer-wrap{
+ isolation:auto!important;
 }
-.main>.composer-wrap>#messageForm{position:relative;z-index:2}
+.main>.composer-wrap::before{
+ content:"";
+ position:absolute;
+ left:0;right:0;
+ top:-30px;height:42px;
+ display:block;
+ pointer-events:none;
+ z-index:5;
+ background:linear-gradient(to bottom,rgba(0,0,0,0),rgba(0,0,0,.24));
+ -webkit-backdrop-filter:blur(16px) saturate(1.12);
+ backdrop-filter:blur(16px) saturate(1.12);
+}
+.main>.composer-wrap>#messageForm{position:relative;z-index:6}
 @media(max-width:620px){
- .main>.composer-wrap::before{top:-18px;left:0;right:0;height:28px}
+ .main>.composer-wrap::before{top:-32px;left:0;right:0;height:44px}
 }
 
 </style>
