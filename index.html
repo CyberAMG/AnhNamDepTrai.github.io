@@ -1016,22 +1016,49 @@ function openUserSettings(){
  $('profileNameInput').addEventListener('input',()=>{$('profilePreviewName').textContent=$('profileNameInput').value||'Tên của bạn'});
 
  root.querySelectorAll('.color-swatches').forEach(group=>group.querySelectorAll('button').forEach(btn=>btn.onclick=()=>{const input=$(group.dataset.target);input.value=btn.dataset.color;input.dispatchEvent(new Event('input',{bubbles:true}))}));
+ function readThemeSettings(){
+  return {
+   theme_mode:$('themeModeInput').value,
+   accent_color:safeColor($('accentColorInput').value,'#5865f2'),
+   background_color:safeColor($('backgroundColorInput').value,'#000000'),
+   panel_color:safeColor($('panelColorInput').value,'#08090b')
+  };
+ }
  function previewProfileTheme(){
-  const mode=$('themeModeInput').value,light=mode==='light',accent=safeColor($('accentColorInput').value,'#5865f2');
-  const bg=light?'#f3f4f8':safeColor($('backgroundColorInput').value,'#000000');
-  const panel=light?'#ffffff':safeColor($('panelColorInput').value,'#08090b');
-  const panel2=light?'#e9ebf2':mixColor(panel,'#ffffff',.055);
-  const line=light?'#d9dce5':mixColor(panel,'#ffffff',.12);
-  const modal=root.querySelector('.modal:has(.profile-settings-layout)');if(!modal)return;
-  modal.style.setProperty('--accent',accent);modal.style.setProperty('--accent2',accent);
-  modal.style.setProperty('--bg',bg);modal.style.setProperty('--panel',panel);
-  modal.style.setProperty('--panel2',panel2);modal.style.setProperty('--line',line);
-  modal.style.setProperty('--text',light?'#171923':'#f1f2f5');
-  modal.style.setProperty('--muted',light?'#626777':'#858995');
-  modal.style.colorScheme=light?'light':'dark';
+  const preview={...ownProfile,...readThemeSettings()};
+  applyUserTheme(preview);
  }
  ['accentColorInput','backgroundColorInput','panelColorInput'].forEach(id=>$(id).addEventListener('input',previewProfileTheme));
  $('themeModeInput').addEventListener('change',previewProfileTheme);
+ let themeSaveTimer=null,themeSaveBusy=false,themeSavePending=false;
+ const queueThemeSave=()=>{
+  clearTimeout(themeSaveTimer);
+  themeSaveTimer=setTimeout(async()=>{
+   if(themeSaveBusy){themeSavePending=true;return}
+   themeSaveBusy=true;
+   themeSavePending=false;
+   try{
+    const theme=readThemeSettings();
+    const {error}=await db.from('profiles').update(theme).eq('id',currentUser.id);
+    if(error)throw error;
+    ownProfile={...ownProfile,...theme};
+    applyUserTheme(ownProfile);
+    callProfileCache.set(currentUser.id,{id:currentUser.id,...ownProfile});
+    refreshProfileViews(currentUser.id);
+    setStatus('modalStatus','Đã tự lưu màu giao diện');
+   }catch(error){setStatus('modalStatus',error.message||'Không thể lưu màu giao diện');}
+   finally{
+    themeSaveBusy=false;
+    if(themeSavePending){themeSavePending=false;queueThemeSave()}
+   }
+  },450);
+ };
+ ['accentColorInput','backgroundColorInput','panelColorInput'].forEach(id=>{
+  const el=$(id);
+  el.addEventListener('input',queueThemeSave);
+  el.addEventListener('change',queueThemeSave);
+ });
+ $('themeModeInput').addEventListener('change',queueThemeSave);
  let autoSaveTimer=null,autoSaveBusy=false,autoSaveAgain=false;
  const queueAutoSave=()=>{
   clearTimeout(autoSaveTimer);
@@ -1043,12 +1070,6 @@ function openUserSettings(){
   },700);
  };
  $('profileNameInput').addEventListener('input',queueAutoSave);
- $('themeModeInput').addEventListener('change',queueAutoSave);
- ['accentColorInput','backgroundColorInput','panelColorInput'].forEach(id=>{
-  const el=$(id);
-  el.addEventListener('input',queueAutoSave);
-  el.addEventListener('change',queueAutoSave);
- });
  avatarInput.addEventListener('change',queueAutoSave);
  bannerInput.addEventListener('change',queueAutoSave);
  const bannerColor=$('profileBannerColor');if(bannerColor)bannerColor.addEventListener('input',queueAutoSave);
