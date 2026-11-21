@@ -658,8 +658,9 @@ body{background:#000}
 }
 /* Stronger, longer matching fades at the top edge and input-bar edge */
 .chat-scroll{
- -webkit-mask-image:linear-gradient(to bottom,transparent 0,black 28px,black 100%)!important;
- mask-image:linear-gradient(to bottom,transparent 0,black 28px,black 100%)!important;
+ /* Keep the scroll surface unmasked so the composer backdrop-filter can sample it. */
+ -webkit-mask-image:none!important;
+ mask-image:none!important;
 }
 .chat-scroll::before{
  content:"";position:absolute;left:0;right:0;top:0;height:28px;
