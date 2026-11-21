@@ -655,10 +655,10 @@ body{background:#000}
  .main{margin:7px 0 7px 6px!important;border-radius:16px!important}
  .main>.topbar{top:8px!important;right:9px!important}
 }
-/* Symmetrical soft fade at the top and bottom of the chat; bottom stops at the composer */
+/* Matched top/bottom chat fade; keep a small clear gap above the composer */
 .chat-scroll{
- -webkit-mask-image:linear-gradient(to bottom,transparent 0,black 22px,black calc(100% - 22px),transparent 100%)!important;
- mask-image:linear-gradient(to bottom,transparent 0,black 22px,black calc(100% - 22px),transparent 100%)!important;
+ -webkit-mask-image:linear-gradient(to bottom,transparent 0,black 18px,black calc(100% - 18px),transparent 100%)!important;
+ mask-image:linear-gradient(to bottom,transparent 0,black 18px,black calc(100% - 18px),transparent 100%)!important;
 }
 .chat-scroll::before,.chat-scroll::after{
  content:"";position:absolute;left:0;right:0;height:18px;
@@ -672,7 +672,7 @@ body{background:#000}
  mask-image:linear-gradient(to bottom,black 0%,transparent 100%);
 }
 .chat-scroll::after{
- bottom:0;
+ bottom:8px;
  -webkit-mask-image:linear-gradient(to bottom,transparent 0%,black 100%);
  mask-image:linear-gradient(to bottom,transparent 0%,black 100%);
 }
