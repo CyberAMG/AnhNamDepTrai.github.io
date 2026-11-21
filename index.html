@@ -672,7 +672,13 @@ body{background:#000}
  mask-image:linear-gradient(to bottom,black 0%,transparent 100%);
 }
 .chat-scroll::after{
- bottom:8px;
+ content:none;
+}
+.main>.composer-wrap::before{
+ content:"";position:absolute;left:20px;right:20px;top:-18px;height:30px;
+ pointer-events:none;z-index:3;
+ -webkit-backdrop-filter:blur(6px);
+ backdrop-filter:blur(6px);
  -webkit-mask-image:linear-gradient(to bottom,transparent 0%,black 100%);
  mask-image:linear-gradient(to bottom,transparent 0%,black 100%);
 }
