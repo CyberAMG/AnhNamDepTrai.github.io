@@ -1042,8 +1042,12 @@ function openUserSettings(){
    finally{autoSaveBusy=false;if(autoSaveAgain){autoSaveAgain=false;queueAutoSave()}}
   },700);
  };
- ['profileNameInput','themeModeInput','accentColorInput','backgroundColorInput','panelColorInput'].forEach(id=>{
-  const el=$(id);el.addEventListener(el.type==='text'?'input':'change',queueAutoSave);
+ $('profileNameInput').addEventListener('input',queueAutoSave);
+ $('themeModeInput').addEventListener('change',queueAutoSave);
+ ['accentColorInput','backgroundColorInput','panelColorInput'].forEach(id=>{
+  const el=$(id);
+  el.addEventListener('input',queueAutoSave);
+  el.addEventListener('change',queueAutoSave);
  });
  avatarInput.addEventListener('change',queueAutoSave);
  bannerInput.addEventListener('change',queueAutoSave);
