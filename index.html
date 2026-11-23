@@ -1085,7 +1085,7 @@ function openUserSettings(){
    }
   },450);
  };
- ['accentColorInput','backgroundColorInput','panelColorInput'].forEach(id=>{
+ ['accentColorInput','panelColorInput'].forEach(id=>{
   const el=$(id);
   el.addEventListener('input',queueThemeSave);
   el.addEventListener('change',queueThemeSave);
